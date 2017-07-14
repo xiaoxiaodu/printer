@@ -1,0 +1,60 @@
+{% extends "content_base.html" %}
+
+{% block content-panel %}
+<div class="xui-sourcesPage">
+	<div class="relative">
+		<ul class="breadcrumb">
+			<li>您当前所在位置</li>
+			<li><a href="/config/sources/">配置</a></li>
+			<li class="active">粉丝来源</li>
+		</ul>
+	</div>
+	
+	<div class="panel panel-default xui-panel-table pl15 pr15 mt15">
+		<div class="panel-header clearfix">
+			<a href="/config/source/" class="btn btn-success fr">
+				<span class="glyphicon glyphicon-plus"></span> 添加来源
+			</a>
+		</div>
+		
+		<div class="panel-body panel-table p0 mt5">
+			<table class="table table-bordered mb10">
+				<thead>
+					<tr>
+						<th width="50">#</th>
+						<th>来源</th>
+						<th width="200">创建时间</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% if sources %}
+					{% for source in sources %}
+					<tr data-id="{{source.id}}">
+						<td>{{forloop.counter}}</td>
+						<td class="tl pl5">
+						   <a href="/config/source/?id={{source.id}}">{{source.name}}</a>
+						</td>
+						<td> {{source.created_at|date:'Y-m-d H:i'}} </td>
+					</tr>
+					{% endfor %}
+					{% else %}
+					<tr>
+						<td colspan="3">没有来源，请添加</td>
+					</tr>
+					{% endif %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+{% block js %}
+<script type="text/javascript">
+$(document).ready(function() {	
+
+});
+</script>
+{% endblock %}
+

@@ -1,0 +1,104 @@
+{% extends "content_base.html" %}
+
+{% block content-panel %}
+<div class="xui-companiesPage">
+	<div class="relative">
+		<ul class="breadcrumb">
+			<li>您当前所在位置</li>
+			<li><a href="/config/sources/">配置</a></li>
+			<li class="active">商家</li>
+		</ul>
+	</div>
+	
+	<div class="panel panel-default xui-panel-table pl15 pr15 mt15">
+		<div class="panel-header clearfix">
+			<a href="/config/company/" class="btn btn-success fr">
+				<span class="glyphicon glyphicon-plus"></span> 添加商家
+			</a>
+		</div>
+		
+		<div class="panel-body panel-table p0 mt5">
+			<table class="table table-bordered mb10">
+				<thead>
+					<tr>
+						<th width="50">#</th>
+						<th>商家</th>
+						<th width="150">创建时间</th>
+						<th width="60">操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% if companies %}
+					{% for company in companies %}
+					<tr data-id="{{company.id}}">
+						<td>{{forloop.counter}}</td>
+						<td 
+							class="tl pl5"
+						>
+						   <a href="/config/company/?id={{company.id}}">
+								{{company.name}}
+							</a>
+						</td>
+						<td>
+							{{company.created_at|date:'Y-m-d H:i'}}
+						</td>
+						<td>
+							{% if company.owner.is_current_user %}
+							<a href="javascript:void(0);" class="xa-delete btn btn-danger btn-xs">删除</a>
+							{% endif %}
+						</td>
+					</tr>
+					{% endfor %}
+					{% else %}
+					<tr>
+						<td colspan="4">没有商家，请添加</td>
+					</tr>
+					{% endif %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+{% block js %}
+<script type="text/javascript">
+$(document).ready(function() {	
+	$('body').delegate('.xa-delete', 'click', function(event) {
+		var $link = $(event.target);
+		var $tr = $link.parents('tr');
+		var id = $tr.data('id');
+		var deleteData = function() {
+			W.getApi().call({
+				app: 'config',
+				resource: 'company',
+				method: 'delete',
+				args: {
+					id: id,
+				},
+				success: function(data) {
+					W.showHint('success', '删除成功，2秒后刷新');
+					_.delay(function() {
+						window.location.reload();
+					}, 2000);
+				},
+				error: function() {
+					W.showHint('error', '删除失败，请稍后再试');
+				}
+			})
+		}
+
+		W.requireConfirm({
+			$el: $link,
+			show_icon: false,
+			position:'top',
+			isTitle: false,
+			msg: '确认删除该数据？',
+			confirm: deleteData
+		});
+	});
+});
+</script>
+{% endblock %}
+

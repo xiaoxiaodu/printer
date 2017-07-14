@@ -1,0 +1,249 @@
+{% extends "content_base.html" %}
+{% load common_filter %}
+
+{% block content-panel %}
+<div class="xui-cardPage">
+	<ul class="breadcrumb">
+		<li>您当前所在位置</li>
+		<li><a href="/fans/fanses/">粉丝</a></li>
+		<li><a href="/fans/cards/">微众卡列表</a></li>
+		<li class="active">发放微众卡</li>
+	</ul>
+
+	<div class="panel panel-default p15 mt15">
+		<div class="panel-header">
+			昵称：<input type="text" name="nickname" class="form-control xui-inlineblock w200" /><a href="javascript:void(0);" class="btn btn-success btn-sm ml20 xa-search">查询粉丝</a>
+		</div>
+		<div 
+			class="panel-body panel-table p0 mt15"
+			data-ui-role="advanced-table" 
+			data-app="fans" 
+			data-resource="fanses" 
+			data-template-id="#table" 
+			data-enable-paginator="false" 
+			data-enable-sort="false" 
+			data-selectable="false" 
+			data-auto-load="false"
+			data-disable-header-select="true" 
+			data-item-count-per-page="10" 
+		>
+		</div>
+	</div>
+	
+	<form 
+		class="form-horizontal mt15 {% if fans %}xui-updateForm{% endif %}" 
+		method="post" 
+		id="editForm" 
+		data-id="{% if card %}{{ card.id }}{% else %}0{% endif %}"
+	>
+		<fieldset >
+			<legend class="pl15 pb5 pt5">
+				反馈意见
+			</legend>
+			<div class="form-group clearfix">
+				<label class="control-label col-sm-2" for="fans">粉丝</label>
+				<div class="col-sm-4">
+					<input type="hidden" name="fans" {% if card %}value="{{ card.fans_id }}"{% endif %} />
+					<input type="text" name="fans_nickname" class="w200 form-control ml5" data-validate="require-notempty" placeholder="通过查询粉丝选择粉丝" {% if card %}value="{{ card.fans.nickname }}"{% endif %} disabled/>
+					<div class="errorHint ml5" data-error-hint="请查询粉丝"></div>
+				</div>
+			</div>
+
+			<div class="form-group clearfix">
+				<label class="control-label col-sm-2" for="weixin_account">服务微信号</label>
+				<div class="col-sm-4">
+					<select name="weixin_account" class="form-control ml5 xui-inlineblock" data-validate="require-select" style="width: 160px;">
+						<option value="-1">选择微信号...</option>
+						{% for weixin_account in weixin_accounts %}
+						<option value="{{weixin_account.id}}" {% if weixin_account.id == card.weixin_account.id %}selected="selected"{% endif %}>{{weixin_account.name}}</option>
+						{% endfor %}
+					</select>
+					<a href="/config/weixin_account/" target="_blank" class="ml5">+添加</a>
+					<div class="errorHint ml5" data-error-hint="请选择一个有效服务微信账号"></div>
+				</div>
+			</div>
+
+			<div class="form-group clearfix">
+				<label class="control-label col-sm-2" for="system_card">微众卡</label>
+				<div class="col-sm-4">
+					<select name="system_card" class="form-control ml5 xui-inlineblock" data-validate="require-select" style="width: 160px;">
+						<option value="-1">选择微众卡...</option>
+						{% for system_card in system_cards %}
+						<option value="{{system_card.id}}" {% if system_card.id == card.card.id %}selected="selected"{% endif %}>{{system_card.name}}</option>
+						{% endfor %}
+					</select>
+					<a href="/config/card/" target="_blank" class="ml5">+添加</a>
+					<div class="errorHint ml5" data-error-hint="请选择一个有效服务微信账号"></div>
+				</div>
+			</div>
+
+			<div class="form-group clearfix">
+				<label class="control-label col-sm-2" for="number">卡号</label>
+				<div class="col-sm-8">
+					<input type="text" name="number" class="form-control ml5" data-validate="require-notempty" value="{{card.number}}"/>
+					<div class="errorHint ml5" data-error-hint="请输入有效卡号"></div>
+				</div>
+			</div>
+
+			<div class="form-group clearfix">
+				<label class="control-label col-sm-2" for="password">密码</label>
+				<div class="col-sm-8">
+					<input type="text" name="password" class="form-control ml5" data-validate="require-notempty" value="{{card.password}}"/>
+					<div class="errorHint ml5" data-error-hint="请输入有效密码"></div>
+				</div>
+			</div>
+
+			<div class="form-group clearfix">
+				<label class="control-label col-sm-2" for="remark">备注</label>
+				<div class="col-sm-8">
+					<textarea
+						name="remark"
+						class="form-control ml5"
+						style="width:100%; min-height:80px;"
+					>{{card.remark}}</textarea>
+				</div>
+			</div>
+
+		</fieldset>
+		
+		<div class="mt20 tc">
+			<a class="btn btn-primary mr40 xa-submit xui-fontBold" href="javascript:void(0);">保 存</a>
+		</div>
+	</form>
+</div>
+{% endblock %}
+
+
+{% block js %}
+{% verbatim %}
+<script id="table" type="text/x-jquery-tmpl">
+	{{if items!='' }}
+	<table class="table table-bordered mb10">
+		<thead>
+			<tr>
+				<th>昵称</th>
+				<th>微信ID</th>
+				<th>微博ID</th>
+				<th>等级</th>
+				<th>来源</th>
+				<th>加入时间</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody>
+		  {{each(i, item) items}}
+			<tr data-id="${item.id}" data-nickname="${item.nickname}">
+				<td 
+					class="tl pl5"
+				>
+				   <a href="/fans/fans/?id=${item.id}">
+						${item.nickname}
+					</a>
+				</td>
+				<td>
+					${item.weixin_id}
+				</td>
+				<td>
+					${item.weibo_id}
+				</td>
+				<td>
+					${item.grade}星
+				</td>
+				<td>
+					${item.source}
+				</td>
+				<td>
+					${item.created_at}
+				</td>
+				<td>
+					<a href="javascript:void(0);" class="xa-select btn btn-primary btn-xs">选中</a>
+				</td>
+			</tr>
+			{{/each}}
+		</tbody>
+		<div class="cb"></div>
+	</table>
+	{{else}}
+		<div class="xui-emptyBox mt10" style="border:solid 1px #ddd;">
+			<span class="ml20">您还没有粉丝，请添加粉丝！</span>
+		</div>
+	{{/if}}
+	<br>
+</script>
+{% endverbatim %}
+
+<script type="text/javascript">
+	var inUpdateMode = {% if card %}true{% else %}false{% endif %};
+	var objectId = "{{card.id}}";
+
+	$(document).ready(function() {
+		var searchFans = function() {
+			var nickname = $.trim($('[name="nickname"]').val());
+			var table = $('[data-ui-role="advanced-table"]').data('view');
+			table.reload({
+				nickname: nickname
+			}, {
+				emptyDataHint: '没有符合条件的数据'
+			});
+		}
+
+		$('.xa-search').click(function(event) {
+			searchFans();
+		});
+
+		$('[name="nickname"]').keypress(function(event) {
+			if (event.which === 13) {
+				event.preventDefault();
+				event.stopPropagation();
+				searchFans();
+			}
+		});
+
+		$('body').delegate('.xa-select', 'click', function(event) {
+			var $link = $(event.currentTarget);
+			var $tr = $link.parents('tr');
+			var fansId = $tr.data('id');
+			var fansNickname = $tr.data('nickname');
+			$('[name="fans"]').val(fansId);
+			$('[name="fans_nickname"]').val(fansNickname);
+
+			var $el = $('[name="fans"]');
+			W.validate($el.parents('.form-group'));
+		});
+
+		$('.xa-submit').click(function() {
+			if (!W.validate()) {
+				return;
+			}
+
+			var method = 'put';
+			if (inUpdateMode) {
+				method = 'post';
+			}
+
+			var $form = $('form');
+			var data = $form.serializeObject();
+			if (inUpdateMode) {
+				data['id'] = objectId;
+			}
+
+			W.getApi().call({
+				app: 'fans',
+				resource: 'card',
+				method: method,
+				args: data,
+				success: function(data) {
+					W.showHint('success', '创建成功');
+					_.delay(function() {
+						window.location.href = '/fans/cards/';
+					}, 500);
+				},
+				error: function(resp) {
+					W.showHint('error', '创建失败，请稍后再试！');
+				}
+			});
+		});
+	});
+</script>
+{% endblock %}
+

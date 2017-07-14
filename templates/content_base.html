@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load account_filter %}
+
+{% block content %}
+<div id="spin-wrapper"><div id="spin"></div><div id="spin-hint" class="ml10"></div></div>
+
+<div id="header">
+    <nav class="navbar navbar-default navbar-fixed-top xui-navbar">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header mr20">
+                <a class="navbar-brand" href="/">微众粉丝团</a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="">
+                <ul class="nav navbar-nav">
+                    <li {% if first_nav == 'fans' %}class="active"{% endif %}><a href="/fans/fanses/"><span class="glyphicon glyphicon-user"></span> 粉丝</a></li>
+                    <li {% if first_nav == 'config' %}class="active"{% endif %}><a href="/config/sources/"><span class="glyphicon glyphicon-cog"></span> 配置</a></li>
+                </ul>
+
+                <div class="btn-group navbar-form navbar-right">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        <span class="glyphicon glyphicon-user"></span> {% if user.first_name %}{{user.first_name}}{% else %}{{user.username}}{% endif %} <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="/logout/">退出</a></li>
+                    </ul>
+                </div>         
+                {% block header_navs %}{% endblock %}
+            </div>
+        </div>
+    </nav>
+</div>
+
+
+<div id="main-panel">
+    <div style="padding-top: 50px;" class="xui-contentPanel">
+            <div class="xui-secondNav">
+                <ul class="nav nav-stacked nav-pills">
+                    {% for nav in second_navs %}
+                    <li {% if second_nav == nav.name %}class="active"{% endif %}>
+                        {% if nav.name == 'total_suggestions'%}
+                            <a href="{{nav.url}}" target="_blank">{{nav.text}}</a>
+                        {% else %}
+                            <a href="{{nav.url}}">{{nav.text}}</a>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="xui-container pt10 pb40 pl15 pr15" style="overflow-x:hidden;">
+                <!-- 内容 start -->
+                {% if not disable_animation %}
+                <div style="visibility: hidden" class="xa-animationContainer">
+                {% endif %}
+                {% block content-panel %}{% endblock %}
+                {% if not disable_animation %}
+                </div>
+                {% endif %}
+                <!-- 内容 end -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block base_js %}
+    <!-- start of ueditor -->
+    <script type="text/javascript">
+     window.UEDITOR_HOME_URL = '/static/lib/ueditor-1.2.6.1/'
+    </script>  
+    <script type="text/javascript" src="/static/lib/ueditor-1.2.6.1/ueditor.config.js"></script>
+    <script type="text/javascript" src="/static/lib/ueditor-1.2.6.1/ueditor.all.js"></script>
+    <!-- end of ueditor -->
+
+    <div id="jsons" style="display: none;">
+        {% for inner_json_name, inner_json_content in jsons.items %}
+        <div id="__json-{{inner_json_name}}">
+            {{inner_json_content|safe}}
+        </div>
+        {% endfor %}
+    </div>
+
+    <script type="text/javascript">
+        W.uid = {{ user.id }};
+        W.API_VERSION = 1;
+        W.isUnderDevelop = {% if under_develop %}true{% else %}false{% endif %};
+        W.isManager = {% if request.user.is_manager %}true{% else %}false{% endif %};
+
+        $(document).ready(function() {
+            $('.xa-addUser').click(function() {
+                W.dialog.showDialog('W.macaron.dialog.EditUserDialog', {
+                    success: function(data) {
+                        W.resource.account.User.put({
+                            data: data,
+                            success: function(data) {
+                                W.showHint('success', '创建用户成功');
+                            },
+                            error: function(data) {
+                                W.showHint('error', '创建用户失败！');
+                            }
+                        })
+                    }
+                });
+            });
+
+            $('body').on('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(event) {
+                var $tables = $('[data-ui-role="advanced-table"]');
+                if ($tables.length > 0) {
+                    $tables.each(function() {
+                        var $table = $(this);
+                        var tableView = $table.data('view');
+                        if (tableView) {
+                            tableView.reload();
+                        }
+                    })
+                }
+            });
+
+            $('.xa-animationContainer').addClass('xui-animation move-left').css('visibility', 'visible');
+        });
+    </script>
+    {% block js %}{% endblock %}
+ {% endblock %}

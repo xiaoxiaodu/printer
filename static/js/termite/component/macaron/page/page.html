@@ -1,0 +1,12 @@
+{% load workbench_filter %}
+
+{% ifequal component.type 'macaron.page' %}
+<div 
+	data-type="macaron.page"
+	class="xa-component xui-component xui-component-page" 
+>
+    {% for sub_component in component.components %}
+    {{ sub_component.html|safe }}
+    {% endfor %}        
+</div>
+{% endifequal %}

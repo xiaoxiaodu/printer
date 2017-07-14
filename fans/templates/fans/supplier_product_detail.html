@@ -1,0 +1,186 @@
+{% extends "content_base.html" %}
+
+{% load common_filter %}
+
+{% block content-panel %}
+<div class="xui-suggestionPage">
+	<ul class="breadcrumb">
+		<li>您当前所在位置</li>
+		<li><a href="/fans/fanses/">粉丝</a></li>
+		<li><a href="/fans/supplier_products/">八千供货商统计</a></li>
+		<li class="active">统计图</li>
+	</ul>
+
+</div>
+<div class="panel panel-default mt15 pb15 mb0">
+
+		<fieldset >
+			<legend class="pl15 pb5 pt5">
+				供货商详情
+			</legend>
+
+			<div class="xui-form-row" style="margin-left: 40px;">
+				<div class="form-group xui-form-item clearfix">
+					<label class="control-label fl" >供货商名称:</label>
+					<div class="fl ml5">
+						{{ supplier_name }}
+
+					</div>
+				</div>
+
+				<div class="form-group xui-form-item clearfix">
+
+					<label class="control-label fl">供货商状态:</label>
+					<div class="fl ml5" id ="supplier_status">
+
+					</div>
+				</div>
+            </div>
+            <div class="xui-form-row" style="margin-left: 40px;">
+				<div class="form-group xui-form-item clearfix">
+					<label class="control-label fl" for="weibo_id">统计日期:</label>
+					<div class="fl ml5" id = "static_date_internal">
+					</div>
+				</div>
+            </div>
+            <div class="xui-form-row" style="margin-left: 40px;">
+                <div class="form-group xui-form-item clearfix">
+					<label class="control-label fl" for="weibo_id">反馈数量:</label>
+					<div class="fl ml5" id="suggestion_num_all">
+					</div>
+				</div>
+                <div class="form-group xui-form-item clearfix">
+					<label class="control-label fl" for="weibo_id">订单数:</label>
+					<div class="fl ml5" id="order_num_all">
+
+					</div>
+				</div>
+			</div>
+        </fieldset>
+
+</div>
+<div class="panel panel-default mt15 pb15 mb0">
+
+        <fieldset class="mt15">
+			<legend class="pl15 pb5 pt5">
+				订单详情
+			</legend>
+			<div class="xui-form-row" style="margin-left: 40px;">
+				<div class="form-group xui-form-item clearfix">
+					<label class="control-label fl" for="nickname">支付金额:</label>
+					<div class="fl ml5" id="pay_money_all">
+
+					</div>
+				</div>
+
+				<div class="form-group xui-form-item clearfix">
+
+					<label class="control-label fl" for="weixin_id">现金:</label>
+					<div class="fl ml5" id="cash_all">
+					</div>
+				</div>
+
+				<div class="form-group xui-form-item clearfix">
+					<label class="control-label fl" for="weibo_id">微众卡:</label>
+					<div class="fl ml5" id="card_all">
+
+					</div>
+				</div>
+			</div>
+            <div class="xui-form-row" style="margin-left: 40px;">
+				<div class="form-group xui-form-item clearfix">
+					<label class="control-label fl" for="nickname">总优惠金额:</label>
+					<div class="fl ml5" id="discount_money_all">
+
+					</div>
+				</div>
+
+				<div class="form-group xui-form-item clearfix">
+					<label class="control-label fl" for="weixin_id">优惠券优惠金额:</label>
+					<div class="fl ml5" id="coupon_money_all">
+
+					</div>
+				</div>
+
+				<div class="form-group xui-form-item clearfix">
+					<label class="control-label fl" for="weibo_id">积分优惠金额:</label>
+					<div class="fl ml5" id="integral_money_all">
+
+					</div>
+				</div>
+			</div>
+
+        </fieldset>
+	</div>
+
+
+        </fieldset>
+</div>
+<div class="panel panel-default mt15 pb15 mb0">
+    <fieldset class="mt15">
+        <legend class="pl15 pb5 pt5">
+                    订单统计图
+                </legend>
+        <div class="xui-section">
+
+            <div class="xa-saleEchart"
+                data-app="fans"
+                data-resource="supplier_product_detail"
+                data-args='{"supplier_id": "{{supplier_id}}"}'>
+            </div>
+        </div>
+    </fieldset>
+
+</div>
+{% endblock %}
+
+
+{% block js %}
+<script id="statistics-echart-tmpl-src" type="text/x-jquery-tmpl">
+<div
+    id="${id}Chart"
+    class="wui-i-content"
+    style="width:1200px; height:450px;overflow:hidden;"
+>
+</div>
+</script>
+<script type="text/javascript" src="/static/js/system/address.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+
+         var saleEchart = new W.view.common.StatisticsECharts({
+
+            el: $('.xa-saleEchart')
+
+         });
+         saleEchart.render();
+         var supplier_name = "{{ supplier_name }}"
+         console.info(supplier_name)
+         data = {'supplier_name':supplier_name}
+         W.getApi().call({
+				app: 'fans',
+				resource: 'supplier_products',
+				method: 'get',
+				args: data,
+				success: function(data) {
+                    var supplier_info = data.items[0]
+                    $("#supplier_status").html(supplier_info['supplier_status']);
+                    $("#suggestion_num_all").html(supplier_info['suggestion_num_all']);
+                    $("#order_num_all").html(supplier_info['order_num_all']);
+                    $("#pay_money_all").html(supplier_info['final_price_all']);
+                    $("#cash_all").html(supplier_info['cash_all']);
+                    $("#card_all").html(supplier_info['card_all']);
+                    $("#discount_money_all").html(supplier_info['discount_money_all']);
+                    $("#coupon_money_all").html(supplier_info['coupon_money_all']);
+                    $("#integral_money_all").html(supplier_info['integral_money_all']);
+					console.info(data.items[0])
+				},
+				error: function(resp) {
+					W.showHint('error', '创建失败，请稍后再试！');
+				}
+         });
+    });
+
+</script>
+{% endblock %}
+

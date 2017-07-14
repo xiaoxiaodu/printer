@@ -1,0 +1,374 @@
+{% extends "content_base.html" %}
+
+{% block content-panel %}
+<div class="xui-fansesPage">
+	<div class="relative">
+		<ul class="breadcrumb">
+			<li>您当前所在位置</li>
+			<li><a href="/fans/fanses/">粉丝</a></li>
+			<li class="active">消费金额统计列表</li>
+		</ul>
+	</div>
+
+	<div class="xui-searchPanel mt15 mb15 form-horizontal panel panel-default">
+		<fieldset class="mt10">
+			<div class="xui-form-row">
+				<div class="xui-form-item clearfix">
+					<label class="control-label fl" for="nickname">昵称</label>
+					<div class="fl">
+						<input
+							type="text"
+							class="form-control w150 ml5"
+							id="nickname"
+							name="nickname"
+						/>
+					</div>
+				</div>
+				<div class="xui-form-item clearfix">
+					<label class="control-label fl" for="weixin_id">微信id</label>
+					<div class="fl">
+						<input
+							type="text"
+							class="form-control w150 ml5"
+							id="weixin_id"
+							name="weixin_id"
+						/>
+					</div>
+				</div>
+				<div class="xui-form-item clearfix">
+					<label class="control-label fl" for="inner_id">云商通id</label>
+					<div class="fl">
+						<input
+							type="text"
+							class="form-control w150 ml5"
+							id="inner_id"
+							name="inner_id"
+						/>
+					</div>
+				</div>
+
+
+			</div>
+
+			<div class="xui-form-row mt10">
+				<div class="xui-form-item clearfix">
+					<label class="control-label fl" for="source">类别</label>
+					<div class="fl">
+						<select class="form-control w150 ml5" name="source">
+							<option value="-1">选择类别...</option>
+							{% for source in sources %}
+							<option value="{{source.id}}">{{source.name}}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+
+				<div class="xui-form-item clearfix">
+					<label class="control-label fl" for="system_id">平台</label>
+					<div class="fl">
+						<select class="form-control w150 ml5" name="system_id">
+							<option value="-1">选择平台...</option>
+							<option value="3">微众精选</option>
+							<option value="26">微众妈妈</option>
+							<option value="27">微众学生</option>
+							<option value="32">微众俱乐部</option>
+						</select>
+					</div>
+				</div>
+
+
+			</div>
+
+			<div class="xui-form-row mt10">
+				<div class="xui-form-item clearfix" style="width:67%">
+					<label class="control-label fl mr5" for="content">时间范围</label>
+					<input
+						type="text"
+						class="form-control xui-datePicker"
+						id="start_date"
+						name="start_date"
+						style=""
+						value="{{ default_start_date }}"
+						readonly="readonly"
+						data-enable-select-time="true"
+						data-ui-role="datepicker"
+						data-format="yy-mm-dd"
+						data-max="now"
+						data-max-el="#end_date"/>
+					<label class="control-label fl ml5 mr5" for="content" style="width:15px">至</label>
+					<input
+						type="text"
+						class="form-control xui-datePicker"
+						id="end_date"
+						name="end_date"
+						value="{{default_end_date}}"
+						readonly="readonly"
+						data-ui-role="datepicker"
+						data-enable-select-time="true"
+						data-format="yy-mm-dd"
+						data-max="now"
+						data-min-el="#start_date"/>
+				</div>
+			</div>
+
+
+			<div class="mt20 tc clearboth">
+				<a href="javascript:void(0);" class="btn btn-primary xa-search">查询</a>
+				<a href="javascript:void(0);" class="btn btn-default xa-reset ml30">重置</a>
+				<a href="javascript:void(0);" class="btn btn-default xa-export ml30">导出数据</a>
+			</div>
+		</fieldset>
+	</div>
+
+	<div class="panel panel-default xui-panel-table pl15 pr15 mt15">
+		<div
+			class="panel-body panel-table p0 mt5"
+			data-ui-role="advanced-table"
+			data-app="fans"
+			data-resource="consumption_statistics"
+			data-template-id="#table"
+			data-enable-paginator="true"
+			data-enable-sort="false"
+			data-selectable="false"
+			data-disable-header-select="true"
+			data-item-count-per-page="20"
+			data-auto-load="false"
+		>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+{% block js %}
+{% verbatim %}
+<script id="table" type="text/x-jquery-tmpl">
+	{{if items!='' }}
+	<table class="table table-bordered mb10">
+		<thead>
+			<tr>
+				<th width="40">#</th>
+				<th>昵称</th>
+				<th>微信id</th>
+				<th>云商通会员id</th>
+				<th>平台</th>
+				<th>类别</th>
+				<th class="tx_sortable xui-blue" data-sort-attr='pay_money' data-sort-direction="up">支付金额</th>
+				<th class="tx_sortable xui-blue" data-sort-attr='cash' data-sort-direction="up">现金</th>
+				<th class="tx_sortable xui-blue" data-sort-attr='card' data-sort-direction="up">微众卡</th>
+				<th class="tx_sortable xui-blue" data-sort-attr='unit_price' data-sort-direction="up">客单价</th>
+				<th class="tx_sortable xui-blue" data-sort-attr='pay_times' data-sort-direction="up">下单次数</th>
+				<th>最近支付时间</th>
+				<th class="tx_sortable xui-blue" data-sort-attr='created_at' data-sort-direction="up" data-init-sort="-created_at">加入时间</th>
+				<th>升级时间</th>
+			</tr>
+		</thead>
+		<tbody>
+		  {{each(i, item) items}}
+			<tr data-id="${item.id}">
+				<td>${i+1}</td>
+				<td	class="tl pl5" title="${item.name}">
+				   <a href="/fans/fans/?id=${item.id}" target="_blank">${item.nickname}</a>
+				</td>
+				<td>${item.weixin_id}</td>
+				<td>${item.inner_id}</td>
+				<td>${item.owner}</td>
+				<td>${item.source}</td>
+				<td>${item.pay_money}</td>
+				<td>${item.cash}</td>
+				<td>${item.card}</td>
+				<td>${item.unit_price}</td>
+				<td>${item.pay_times}</td>
+				<td>${item.last_pay_time}</td>
+				<td>${item.created_at}</td>
+				<td>${item.upgraded_at}</td>
+			</tr>
+			{{/each}}
+		</tbody>
+		<div class="cb"></div>
+	</table>
+	{{else}}
+		<div class="xui-emptyBox mt10" style="border:solid 1px #ddd;">
+			<span class="ml20">您还没有粉丝，请添加粉丝！</span>
+		</div>
+	{{/if}}
+	<br>
+</script>
+{% endverbatim %}
+
+<script type="text/javascript">
+$(document).delegate('.xa-hide-col','click',function(event) {
+	var $el = $(event.target);
+	var cid = $el.parent().attr('cid');
+	$('table tr').find('td:eq(' + cid + ')').hide();
+	$('table tr').find('th:eq(' + cid + ')').hide();
+});
+$(document).ready(function() {
+
+	$('.xa-search').click(function(event) {
+		var nickname = $.trim($('[name="nickname"]').val());
+		var source = $.trim($('[name="source"]').val());
+		var weixin_id = $.trim($('[name="weixin_id"]').val());
+		var inner_id = $.trim($('[name="inner_id"]').val());
+		var system_id = $.trim($('[name="system_id"]').val());
+		var startDate = $.trim($('#start_date').val());
+		var endDate = $.trim($('#end_date').val());
+		if(startDate.length > 0 && endDate.length == 0){
+			W.showHint('error', '请输入结束日期!');
+			return;
+		}
+		if(endDate.length > 0 && startDate.length == 0){
+			W.showHint('error', '请输入开始日期!');
+			return;
+		}
+
+		var table = $('[data-ui-role="advanced-table"]').data('view');
+		table.reload({
+			nickname: nickname,
+			source: source,
+			system_id: system_id,
+			weixin_id: weixin_id,
+			inner_id: inner_id,
+			start_date: startDate,
+			end_date: endDate
+		}, {
+			emptyDataHint: '没有符合条件的数据'
+		});
+	});
+
+	// 组织导出的查询参数格式
+	var getArgsExportValueByDict = function(args) {
+		if (args.length == 0) {
+			return ""
+		} else {
+			for (var i = args.length - 1; i >= 0; i--) {
+				args[i] = args[i].replace(/"/g, '').replace(':', '=')
+			}
+			return args.join('&');
+		}
+	}
+
+	$('.xa-export').click(function(event) {
+		var nickname = $.trim($('[name="nickname"]').val());
+		var source = $.trim($('[name="source"]').val());
+
+		var weixin_id = $.trim($('[name="weixin_id"]').val());
+		var inner_id = $.trim($('[name="inner_id"]').val());
+		var actor_id = $.trim($('[name="actor_id"]').val());
+		var system_id = $.trim($('[name="system_id"]').val());
+		var startDate = $.trim($('#start_date').val());
+		var endDate = $.trim($('#end_date').val());
+
+		if(startDate.length > 0 && endDate.length == 0){
+			W.showHint('error', '请输入结束日期!');
+			return;
+		}
+		if(endDate.length > 0 && startDate.length == 0){
+			W.showHint('error', '请输入开始日期!');
+			return;
+		}
+
+		var url = '/fans/consumption_statistics_export/';
+		var args = [
+			"nickname:"+nickname,
+			"source:"+source,
+			"actor_id:"+actor_id,
+			"system_id:"+system_id,
+			"weixin_id:"+weixin_id,
+			"inner_id:"+inner_id,
+			"start_date:"+startDate,
+			"end_date:"+endDate
+		];
+		args = getArgsExportValueByDict(args);
+		if (args.length > 0) {
+			url = url + '?'+args;
+		}
+		console.log(url, args)
+		window.open(url, '消费金额统计导出', 'Window Settings');
+		//W.getLoadingView().show();
+		//$('#spin-hint').html('玩命导出中...');
+		//var $frame=$('<iframe>').hide().attr('src',url);
+		//$('body').append($frame);
+		//setTimeout(function(){W.getLoadingView().hide()}, 5000);
+	});
+
+	$('.xa-reset').click(function(event) {
+		$('[name="nickname"]').val('');
+		$('[name="weixin_id"]').val('');
+		$('[name="inner_id"]').val('');
+		$('#start_date').val('');
+		$('#end_date').val('');
+		$('[name="source"]').val('-1');
+		$('[name="system_id"]').val('-1');
+	});
+
+
+	// 初始化日历控件
+	var addDatepicker = function() {
+		var _this = this;
+		$('input[data-ui-role="datepicker"]').each(function() {
+			var $datepicker = $(this);
+			var format = $datepicker.attr('data-format');
+			var min = $datepicker.attr('data-min');
+			var max = $datepicker.attr('data-max');
+			var $min_el = $($datepicker.attr('data-min-el'));
+			var $max_el = $($datepicker.attr('data-max-el'));
+			var options = {
+				buttonText: '选择日期',
+				currentText: '当前时间',
+				hourText: "小时",
+				minuteText: "分钟",
+				numberOfMonths: 1,
+				dateFormat: format,
+				//dateFormat: format,
+				closeText: '确定',
+				prevText: '&#x3c;上月',
+				nextText: '下月&#x3e;',
+				monthNames: ['一月','二月','三月','四月','五月','六月',
+					'七月','八月','九月','十月','十一月','十二月'],
+				monthNamesShort: ['一','二','三','四','五','六',
+					'七','八','九','十','十一','十二'],
+				dayNames: ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'],
+				dayNamesShort: ['周日','周一','周二','周三','周四','周五','周六'],
+				dayNamesMin: ['日','一','二','三','四','五','六'],
+				beforeShow: function(e) {
+					if(min === 'now') {
+						$(this).datepicker('option', 'minDate', new Date());
+					}else if(min){
+						$(this).datepicker('option', 'minDate', min);
+					}
+
+					if($min_el){
+						var startTime = $min_el.val();
+						if(startTime) {
+							$(this).datepicker('option', 'minDate', startTime);
+							$(this).datepicker('option', 'minDateTime', new Date(startTime));
+						}
+					}
+
+					if(max === 'now') {
+						$(this).datepicker('option', 'maxDate', new Date());
+					}else if(max){
+						$(this).datepicker('option', 'maxDate', max);
+					}
+
+					if($max_el){
+						var endTime = $max_el.val();
+						if(endTime) {
+							$(this).datepicker('option', 'maxDate', endTime);
+						}
+					}
+				},
+				onClose: function() {
+				}
+			};
+
+			// $datepicker.datetimepicker(options);
+			$datepicker.datepicker(options);
+		});
+	};
+	addDatepicker();
+});
+</script>
+{% endblock %}
+

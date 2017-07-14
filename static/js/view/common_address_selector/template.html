@@ -1,0 +1,19 @@
+<script id="common-address-selector-tmpl" type='text/x-handlebar-tmpl'>
+<select class="form-control xa-province" style="width:auto; display:inline-block;">
+		<option value="0">未知</option>
+	{{#each provinces as |province item_index|}}
+		<option value="{{province.id}}" {{#if province.selected}}selected{{/if}}>{{province.name}}</option>
+	{{/each}}
+</select>
+
+<select class="form-control ml5 xa-city" style="width:auto; display:inline-block;">
+		<option value="0">未知</option>
+</select>
+</script>
+
+<script id="common-address-selector-tmpl-cities" type='text/x-handlebar-tmpl'>
+	<option value="0">未知</option>
+	{{#each cities as |city item_index|}}
+	<option value="{{city.id}}" data-a="{{city.selected}}" {{#if city.selected}}selected{{/if}}>{{city.name}}</option>
+	{{/each}}
+</script>

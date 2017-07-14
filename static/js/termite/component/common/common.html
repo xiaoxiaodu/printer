@@ -1,0 +1,18 @@
+{% ifequal component.type 'wepage.runtime_component_container' %}
+    {% for sub_component in component.components %}
+    <div 
+        class="xa-componentContainer" 
+        data-contained-cid="{{sub_component.cid}}" 
+        data-cid="{{sub_component.cid}}" 
+        data-widget-sortable="true" 
+        data-ui-behavior="xub-selectable" 
+        data-x="0"
+        data-y="0"
+        style="position:absolute; margin:0px; padding:0px; left:{{sub_component.model.x}}px; top:{{sub_component.model.y}}px; width:{{sub_component.model.width}}px; height:{{sub_component.model.height}}px; z-index:{{sub_component.model.zindex}};"
+    >
+        {{ sub_component.html|safe }}
+        <div class="xui-designView-selectIndicator xa-selectIndicator">
+        </div>
+    </div>
+    {% endfor %}
+{% endifequal %}

@@ -1,0 +1,46 @@
+{% extends "content_base.html" %}
+
+{% block content-panel %}
+<div class="xui-usersPage mb50 xui-userList clearfix">
+	{% for user in users %}
+	<div class="xui-oneUser fl" data-id="{{user.id}}">
+		<img src="{{user.get_profile.thumbnail}}" class="img-circle" width="100" height="100" />
+		<div class="mt10">{{user.first_name}}</div>
+		<div class="xui-inner-actionBar xa-actionBar xui-hide">
+			<button class="btn btn-default btn-xs xa-editUser"><span class="glyphicon glyphicon-pencil"></span></button>
+			<button class="btn btn-default btn-xs xa-deleteUser"><span class="glyphicon glyphicon-remove"></span></button>
+		</div>
+	</div>
+	{% endfor %}
+</div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+$(document).ready(function() {
+	$('.xa-addUser').click(function() {
+		W.dialog.showDialog('W.polaris.dialog.EditUserDialog', {
+			success: function(data) {
+				W.getApi().call({
+					app: 'user',
+					api: 'user/create',
+					args: data,
+					method: 'post',
+					success: function(data) {
+						W.reload();
+					},
+					error: function(resp) {
+
+					}
+				});
+			}
+		});
+	});
+
+	var view = new W.view.project.UserListView({
+		el: '.xui-userList'
+	});
+	view.render();
+})
+</script>
+{% endblock %}

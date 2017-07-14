@@ -1,0 +1,106 @@
+{% extends "content_base.html" %}
+
+{% block content-panel %}
+<div class="xui-productsPage">
+	<div class="relative">
+		<ul class="breadcrumb">
+			<li>您当前所在位置</li>
+			<li><a href="/config/sources/">配置</a></li>
+			<li class="active">渠道扫码</li>
+		</ul>
+	</div>
+	
+	<div class="panel panel-default xui-panel-table pl15 pr15 mt15">
+		<div class="panel-header clearfix">
+			<a href="/config/qrcode/" class="btn btn-success fr">
+				<span class="glyphicon glyphicon-plus"></span> 添加二维码
+			</a>
+		</div>
+		
+		<div class="panel-body panel-table p0 mt5">
+			<table class="table table-bordered mb10">
+				<thead>
+					<tr>
+						<th width="50">#</th>
+						<th width="150">二维码id</th>
+						<th>二维码名称</th>
+						<th>投放公众号平台</th>
+						<th width="150">创建时间</th>
+						<th width="70">操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% if qrcodes %}
+					{% for qrcode in qrcodes %}
+					<tr data-id="{{qrcode.id}}">
+						<td>{{forloop.counter}}</td>
+						<td>{{qrcode.setting_id}}</td>
+						<td 
+							class="tl pl5"
+						>
+						   <a href="/config/qrcode/?id={{qrcode.id}}">
+								{{qrcode.name}}
+							</a>
+						</td>
+                        <td>{{qrcode.get_system_id_display}}</td>
+						<td>
+							{{qrcode.created_at|date:'Y-m-d H:i'}}
+						</td>
+						<td>
+							<a href="javascript:void(0);" class="xa-delete btn btn-danger btn-xs">删除</a>
+						</td>
+					</tr>
+					{% endfor %}
+					{% else %}
+					<tr>
+						<td colspan="6">没有二维码，请添加</td>
+					</tr>
+					{% endif %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+{% block js %}
+<script type="text/javascript">
+$(document).ready(function() {	
+	$('body').delegate('.xa-delete', 'click', function(event) {
+		var $link = $(event.target);
+		var $tr = $link.parents('tr');
+		var id = $tr.data('id');
+		var deleteData = function() {
+			W.getApi().call({
+				app: 'config',
+				resource: 'qrcode',
+				method: 'delete',
+				args: {
+					id: id,
+				},
+				success: function(data) {
+					W.showHint('success', '删除成功，2秒后刷新');
+					_.delay(function() {
+						window.location.reload();
+					}, 2000);
+				},
+				error: function() {
+					W.showHint('error', '删除失败，请稍后再试');
+				}
+			})
+		}
+
+		W.requireConfirm({
+			$el: $link,
+			show_icon: false,
+			position:'top',
+			isTitle: false,
+			msg: '确认删除该数据？',
+			confirm: deleteData
+		});
+	});
+});
+</script>
+{% endblock %}
+

@@ -1,0 +1,56 @@
+{% extends "content_base.html" %}
+{% load common_tag %}
+
+{% block content-panel %}
+<div id="todos">
+	{% if has_todo %}
+		<h2 class="chartTitle"> 您有{{ todo_count }}个待办事项 </h2>
+		{% for todo in todos %}
+		<div class="alert {% if has_todo %}alert-success{% else %}alert-info{% endif %} m1 clearfix">
+			* {{ todo.text }}<a class="fr" href="{{ todo.url }}">查看</a>
+		</div>
+		{% endfor %}
+	{% else %}
+		<h2 class="chartTitle"> 当前您没有待办事项 </h2>
+	{% endif %}
+</div>
+
+<div id="statisticsView">
+	<div class="mt20 chart longChart" id="dailyMessage"></div>
+
+	<div class="mt20 chart longChart" id="dailyUV"></div>
+</div>
+{% endblock %}
+
+{% block jsTemplate %}
+	{% include_raw 'jsTemplate/chart.html' %}
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+	$(document).ready(function() {
+		var chart = new W.SingleTitleChart({
+			el: '#dailyMessage',
+			id: 'dialyMessage',
+			title: '每日接收消息数',
+			dataUrl: '/message/statistics/daily_message_trend/get/',
+			args: {
+				days: 7
+			}
+		});
+		chart.render();
+
+		var chart = new W.SingleTitleChart({
+			el: '#dailyUV',
+			id: 'dialyUV',
+			title: '每日微站访问数',
+			dataUrl: '/shop/statistics/visit_daily_trend/get/',
+			args: {
+				days: 7,
+				type: 'uv'
+			}
+		});
+		chart.render();
+	});
+</script>
+{% endblock %}

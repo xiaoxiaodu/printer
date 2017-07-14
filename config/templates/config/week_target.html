@@ -1,0 +1,122 @@
+{% extends "content_base.html" %}
+
+{% block content-panel %}
+<div class="xui-fansPage">
+	<ul class="breadcrumb">
+		<li>您当前所在位置</li>
+		<li><a href="/config/sources/">配置</a></li>
+		<li><a href="/config/week_targets/">周目标</a></li>
+		<li class="active">添加周目标</li>
+	</ul>
+	
+	<form class="form-horizontal mt15" method="post" id="editForm">
+		<fieldset >
+			<legend>
+			</legend>
+			<div class="form-group ml15">
+				<label class=" col-sm-1 " for="week_num">选择周：</label>
+				<select class="form-control w260 ml5" name="week_num" id="week_num" data-validate="require-select">
+						<option value="1">本周({{monday}}~{{sunday}})</option>
+						<option value="2">下周({{next_monday}}~{{next_sunday}})</option>
+				</select>
+			</div>
+			<div class="form-group ml15" style="display:none;">
+				<label class="col-sm-1 " for="tiyan_num">体验用户目标：</label>
+				<div class="col-sm-1">
+					<input type="text" class="form-control" id="tiyan_num" name="tiyan_num" value="0" data-validate="require-int"/>
+					<div class="errorHint"></div>
+				</div>
+			</div>
+			<div class="form-group ml15"  style="display:none;">
+				<label class="col-sm-1 " for="weijiaren_num">微家人目标：</label>
+				<div class="col-sm-1">
+					<input type="text" class="form-control" id="weijiaren_num" name="weijiaren_num" value="0" data-validate="require-int"/>
+					<div class="errorHint"></div>
+				</div>
+			</div>
+			<div class="form-group ml15"  style="display:none;">
+				<label class="col-sm-1 " for="daiyanren_num">代言人目标：</label>
+				<div class="col-sm-1">
+					<input type="text" class="form-control" id="daiyanren_num" name="daiyanren_num" value="0" data-validate="require-int"/>
+					<div class="errorHint"></div>
+				</div>
+			</div>
+			<div class="form-group ml15"  style="display:none;">
+				<label class="col-sm-1 " for="hehuoren_num">合伙人目标：</label>
+				<div class="col-sm-1">
+					<input type="text" class="form-control" id="hehuoren_num" name="hehuoren_num" value="0" data-validate="require-int"/>
+					<div class="errorHint"></div>
+				</div>
+			</div>
+			<div class="form-group ml15">
+				<label class="col-sm-1 " for="dali_num">合伙人目标：</label>
+				<div class="col-sm-1">
+					<input type="text" class="form-control" id="dali_num" name="dali_num" data-validate="require-int"/>
+					<div class="errorHint"></div>
+				</div>
+			</div>
+			<div class="form-group ml15">
+				<label class="col-sm-1 " for="weihu_num">微家人目标：</label>
+				<div class="col-sm-1">
+					<input type="text" class="form-control" id="weihu_num" name="weihu_num" data-validate="require-int"/>
+					<div class="errorHint"></div>
+				</div>
+			</div>
+
+			<div class="form-group ml15">
+				<span>周目标设定后不能修改，有问题请联系赵磊</span>
+			</div>
+
+
+		</fieldset>
+
+		<div class="mt20 tc">
+			<a class="btn btn-primary mr40 xa-submit xui-fontBold" href="javascript:void(0);">保 存</a>
+		</div>
+	</form>
+</div>
+{% endblock %}
+
+
+{% block js %}
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('input').keypress(function(event) {
+			if (event.which === 13) {
+				event.preventDefault();
+				event.stopPropagation();
+				$('form').submit();
+			}
+		});
+
+		$('.xa-submit').click(function() {
+			if (!W.validate()) {
+				return;
+			}
+			$('form').submit();
+		});
+		
+		$('form').submit(function() {
+			var $form = $('form');
+			var data = $form.serializeObject();
+			W.getApi().call({
+				app: 'config',
+				resource: 'week_target',
+				method: 'put',
+				args: data,
+				success: function(data) {
+					W.showHint('success', '周目标创建成功！');
+					_.delay(function() {
+						window.location.href = '/config/week_targets/';
+					}, 500);
+				},
+				error: function(resp) {
+					alert(resp.errMsg);
+				}
+			});
+			return false;
+		});
+	});
+</script>
+{% endblock %}
+

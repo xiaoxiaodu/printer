@@ -1,0 +1,145 @@
+{% extends "content_base.html" %}
+{% load common_filter %}
+
+{% block content-panel %}
+<div class="xui-suggestionPage">
+	<ul class="breadcrumb">
+		<li>您当前所在位置</li>
+		<li><a href="/fans/fanses/">粉丝</a></li>
+		<li><a href="/fans/fans/?id={{fans.id}}">{{fans.nickname}}详情</a></li>
+		<li class="active">添加反馈意见</li>
+	</ul>
+	
+	<form 
+		class="form-horizontal mt15 {% if fans %}xui-updateForm{% endif %}" 
+		method="post" 
+		id="editForm" 
+		data-id="{% if activity %}{{ activity.id }}{% else %}0{% endif %}"
+	>
+		<fieldset>
+			<legend class="pl15 pb5 pt5">
+				改进进度
+			</legend>
+			<div class="form-group clearfix">
+				<label class="control-label col-sm-2" for="actor">处理人</label>
+				<div class="col-sm-4">
+					<select name="actor" class="form-control ml5 xui-inlineblock" data-validate="require-select" style="width: 160px;">
+						<option value="-1">选择处理人</option>
+						{% for actor in actors %}
+						<option value="{{actor.id}}">{{actor.name}}</option>
+						{% endfor %}
+					</select>
+					<a href="/config/actor/" target="_blank" class="ml5">+添加</a>
+					<div class="errorHint ml5" data-error-hint="请选择一个有效的处理人"></div>
+				</div>
+			</div>
+
+			<div class="form-group clearfix">
+				<label class="control-label col-sm-2" for="problem">问题</label>
+				<div class="col-sm-8">
+					<textarea
+						name="problem"
+						class="ml5 form-control"
+						style="height:200px;"
+						data-validate="require-notempty"
+					></textarea>
+					<div class="errorHint ml5"></div>
+				</div>
+			</div>
+
+			<div class="form-group clearfix">
+				<label class="control-label col-sm-2" for="solution">改善方案</label>
+				<div class="col-sm-8">
+					<textarea
+						name="solution"
+						class="ml5 form-control"
+						style="height: 200px;"
+						data-validate="require-notempty"
+					></textarea>
+					<div class="errorHint ml5"></div>
+				</div>
+			</div>
+
+			<div class="form-group clearfix">
+				<label class="control-label col-sm-2" for="reply">答复用户</label>
+				<div class="col-sm-8">
+					<textarea
+						name="reply"
+						class="ml5 form-control"
+						style="height: 100px;"
+					></textarea>
+				</div>
+			</div>
+
+			<div class="form-group clearfix">
+				<label class="control-label col-sm-2" for="remark">备注</label>
+				<div class="col-sm-8">
+					<textarea
+						name="remark"
+						class="form-control ml5"
+						style="width:100%; min-height:80px;"
+					></textarea>
+				</div>
+			</div>
+
+		</fieldset>
+		
+		<div class="mt20 tc">
+			<a class="btn btn-primary mr40 xa-submit" href="javascript:void(0);">保 存</a>
+		</div>
+	</form>
+</div>
+{% endblock %}
+
+
+{% block js %}
+<script type="text/javascript" src="/static/js/system/address.js"></script>
+<script type="text/javascript">
+	var inUpdateMode = {% if progress %}true{% else %}false{% endif %};
+	var objectId = "{{progress.id}}";
+	var suggestionId = "{{suggestion.id}}";
+	var fansId = "{{fans.id}}";
+
+	$(document).ready(function() {
+		$('.xa-tabs a').click(function (e) {
+			e.preventDefault()
+			$(this).tab('show')
+		})
+
+		$('.xa-submit').click(function() {
+			if (!W.validate()) {
+				return;
+			}
+
+			var method = 'put';
+			if (inUpdateMode) {
+				method = 'post';
+			}
+
+			var $form = $('form');
+			var data = $form.serializeObject();
+			if (inUpdateMode) {
+				data['id'] = objectId;
+			}
+			data['suggestion_id'] = suggestionId;
+
+			W.getApi().call({
+				app: 'fans',
+				resource: 'suggestion_progress',
+				method: method,
+				args: data,
+				success: function(data) {
+					W.showHint('success', '创建成功');
+					_.delay(function() {
+						window.location.href = '/fans/suggestion_progresses/?suggestion_id='+suggestionId;
+					}, 500);
+				},
+				error: function(resp) {
+					W.showHint('error', '创建失败，请稍后再试！');
+				}
+			});
+		});
+	});
+</script>
+{% endblock %}
+

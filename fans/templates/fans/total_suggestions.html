@@ -1,0 +1,708 @@
+{% extends "content_base.html" %}
+
+{% block content-panel %}
+<div class="xui-totalSuggestionsPage">
+	<div class="relative">
+		<ul class="breadcrumb">
+			<li>您当前所在位置</li>
+			<li><a href="/fans/fanses/">粉丝</a></li>
+			<li class="active">反馈意见</li>
+		</ul>
+	</div>
+
+	<div class="xui-searchPanel xa-searchPanel mt15 form-horizontal panel panel-default">
+		<fieldset class="mt10">
+			<div class="xui-form-row">
+				<!-- <div class="xui-form-item clearfix">
+					<label class="control-label fl" for="type">类型</label>
+					<div class="fl">
+						<select class="form-control w150 ml5" name="type">
+							<option value="-1">选择类型...</option>
+							{% for suggestion_type in suggestion_types %}
+							<option value="{{suggestion_type.id}}">{{suggestion_type.name}}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div> -->
+
+				<div class="xui-form-item clearfix">
+					<label class="control-label fl" for="system_account">平台</label>
+					<div class="fl">
+						<select class="form-control w150 ml5" name="system_account">
+							<option value="-1">选择平台...</option>
+							<option value="3">微众精选</option>
+							<option value="26">微众妈妈</option>
+							<option value="27">微众学生</option>
+							<option value="32">微众俱乐部</option>
+						</select>
+					</div>
+				</div>
+				<div class="xui-form-item clearfix">
+					<label class="control-label fl" for="company">商家</label>
+					<div class="fl">
+						<select class="form-control w150 ml5 xa-company" name="company">
+							<option value="-1">选择商家...</option>
+							{% for company in companies %}
+							<option value="{{company.id}}">{{company.name}}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+
+				<div class="xui-form-item clearfix">
+					<label class="control-label fl" for="product">产品</label>
+					<div class="fl">
+						<select class="form-control w150 ml5 xa-product" name="product">
+							<option value="-1">选择产品...</option>
+							{% for product in products %}
+							<option value="{{product.id}}">{{product.name}}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+			</div>
+
+			<div class="xui-form-row mt10">
+				
+				<div class="xui-form-item clearfix">
+					<label class="control-label fl" for="nickname">提出人</label>
+					<div class="fl">
+						<input 
+							type="text" 
+							class="form-control w150 ml5" 
+							id="nickname" 
+							name="nickname"
+						/>
+					</div>
+				</div>
+
+				<div class="xui-form-item clearfix">
+					<label class="control-label fl" for="normalized_content">意见</label>
+					<div class="fl">
+						<input 
+							type="text" 
+							class="form-control w150 ml5" 
+							id="normalized_content" 
+							name="normalized_content"
+						/>
+					</div>
+				</div>
+
+				<div class="xui-form-item clearfix">
+					<label class="control-label fl" for="content">原始意见</label>
+					<div class="fl">
+						<input 
+							type="text" 
+							class="form-control w150 ml5" 
+							id="content" 
+							name="content"
+						/>
+					</div>
+				</div>
+			</div>
+
+			<div class="xui-form-row mt10">
+				<div class="xui-form-item clearfix">
+					<label class="control-label fl" for="level">级别</label>
+					<div class="fl">
+						<select class="form-control w150 ml5 xa-selectLevel" name="level">
+							<option value="-1">选择级别...</option>
+							<option value="">无级别</option>
+							<option value="A">A级</option>
+							<option value="B">B级</option>
+							<option value="C">C级</option>
+							<option value="D">D级</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="xui-form-item clearfix">
+					<label class="control-label fl" for="title">反馈标题</label>
+					<div class="fl">
+						<input 
+							type="text" 
+							class="form-control w150 ml5" 
+							id="title" 
+							name="title"
+						/>
+					</div>
+				</div>
+				<div class="clearfix">
+				</div>
+			</div>
+			<div class="xui-form-row mt10">
+				<div class="xui-form-item clearfix" style="width:67%">
+					<label class="control-label fl mr5" for="content">反馈时间</label>
+					<input
+						type="text"
+						class="form-control xui-datePicker"
+						id="start_date"
+						name="start_date"
+						style=""
+						value=""
+						readonly="readonly"
+						data-enable-select-time="true"
+						data-ui-role="datepicker"
+						data-format="yy-mm-dd"
+						data-max="now" 
+						data-max-el="#end_date"/>
+					<label class="control-label fl ml5 mr5" for="content" style="width:15px">至</label>
+					<input
+						type="text"
+						class="form-control xui-datePicker"
+						id="end_date"
+						name="end_date"
+						value=""
+						readonly="readonly"
+						data-ui-role="datepicker"
+						data-enable-select-time="true"
+						data-format="yy-mm-dd"
+						data-max="now"
+						data-min-el="#start_date"/>
+				</div>
+				<div class="clearfix">
+				
+				</div>
+			</div>
+
+			<div class="mt20 tc">
+				<a href="javascript:void(0);" class="btn btn-primary xa-search">查询</a>
+				<a href="javascript:void(0);" class="btn btn-default xa-reset ml30">重置</a>
+				<a href="javascript:void(0);" class="btn btn-default xa-export ml30">导出数据</a>
+			</div>
+		</fieldset>
+	</div>
+
+	
+	<div class="panel panel-default xui-panel-table pl15 pr15 mt15">		
+		<div 
+			class="panel-body panel-table p0 mt5 pt10"
+			data-ui-role="advanced-table" 
+			data-app="fans" 
+			data-resource="total_suggestions" 
+			data-template-id="#table" 
+			data-enable-paginator="true" 
+			data-enable-sort="false" 
+			data-selectable="false" 
+			data-disable-header-select="true" 
+			data-item-count-per-page="20" 
+			data-auto-load="false"
+		>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+{% block js %}
+{% verbatim %}
+<script id="table" type="text/x-jquery-tmpl">
+	{{if items!='' }}
+	<table class="table table-bordered mb10 mt10 xui-i-table">
+		<thead>
+			<tr>
+				<th width="40">#</th>
+				<th width="70">提出人</th>
+				<th width="50">反馈总数</th>
+				<th width="50">奖励总数</th>
+				<th width="70">平台</th>
+				<th>意见</th>
+				<th width="60">商家</th>
+				<th width="60">产品</th>
+				<th width="60">订单号</th>
+				<th width="60">级别</th>
+				<!--<th width="60">类型</th>
+				<th width="60">改善</th>-->
+				<th width="30">备注</th>
+				<th width="100">反馈时间</th>
+				<th width="150">审核</th>
+				<th width="150">操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			{{each(i, suggestion) items}}
+			<tr data-id="${suggestion.id}" member-id="${suggestion.fans.member_id}" fans-id="${suggestion.fans.id}" product-name="${suggestion.product.name}" data-resource="suggestion" class="xui-i-expandable xa-expand">
+				<td>${suggestion.index}</td>
+				<td><a href="/fans/fans/?id=${suggestion.fans.id}">${suggestion.fans.nickname}</a></td>
+				<td>${suggestion.fans.suggestion_count}</td>
+				<td>${suggestion.price_count}</td>
+				<td>${suggestion.owner.first_name}</td>
+
+				<td>
+					{{html suggestion.normalized_content}}
+					{{if suggestion.duplicate_with == -1}}
+						&nbsp;&nbsp;
+						<span style="color:red;">无价值的调研内容</span>
+					{{/if}}
+
+					{{if suggestion.duplicate_fans}}
+						&nbsp;&nbsp;
+						<span style="color:red;">
+							与用户<a href="/fans/fans/?id=${suggestion.duplicate_fans.id}" target="_blank">${suggestion.duplicate_fans.nickname}</a>的反馈信息重复
+						</span>
+					{{/if}}
+				</td>
+				<td>${suggestion.company.name}</td>
+				<td>${suggestion.product.name}</td>
+				<td>${suggestion.order_id}</td>
+				<td data-level="${suggestion.level}">
+					{{if suggestion.level }}
+						${suggestion.level}级&nbsp;&nbsp;&nbsp;
+						<a class="xa-changeLevel" href="javascript:void(0);">修改</a>
+					{{else}}
+						<select class="form-control w80 xa-level" name="level" {{if !suggestion.owner.is_current_user}}disabled="disabled"{{/if}}>
+							<option value="">无</option>
+							<option value="A">A级</option>
+							<option value="B">B级</option>
+							<option value="C">C级</option>
+							<option value="D">D级</option>
+						</select>
+					{{/if}}
+				</td>
+				<!--<td>${suggestion.type.name}</td>
+				<td>{{if suggestion.has_process}}有{{else}}无{{/if}}</td>-->
+				<td>${suggestion.remark}</td>
+				<td>${suggestion.created_at}</td>
+				<td>
+					{{if suggestion.reward }}
+						${suggestion.reward}
+					{{else}}
+						<select class="form-control w150 xa-coupon" name="coupon" {{if !suggestion.owner.is_current_user}}disabled="disabled"{{/if}}>
+							<option value="-1">请选择优惠券..</option>
+							<option value="0">无奖励</option>
+							{{each(i, coupon) data.data.coupons}}
+								<option value="${coupon.weapp_rule_id}">${coupon.name}</option>
+							{{/each}}
+						</select>
+						<a href="javascript:void(0);" class="btn btn-success btn-xs mt5 xa-reward hidden">确定</a>
+					{{/if}}
+				</td>
+				<td>
+					{{if suggestion.owner.is_current_user}}
+					<a target="_blank" href="/fans/suggestion_progresses/?suggestion_id=${suggestion.id}" class="btn btn-success btn-xs">改善</a>
+					<a target="_blank" href="/fans/suggestion/?id=${suggestion.id}&fans_id=${suggestion.fans.id}" class="btn btn-default btn-xs">编辑</a>
+					<a href="javascript:void(0);" class="btn btn-danger btn-xs xa-delete">删除</a>
+					{{/if}}
+				</td>
+			</tr>
+				
+			<tr class="xui-i-expanded {{if !data.data.is_show_content}}xui-hide{{/if}}" data-related-suggestion-id="${suggestion.id}">
+				<td colspan="12" class="xui-i-content">
+					<h2 class="xui-i-contentHeader">原始意见:</h2>
+					{{html suggestion.content}}
+				</td>
+			</tr>
+			{{/each}}
+			<tr>
+				<td cid="0"><span class="xa-hide-col cp">X</span></td>
+				<td cid="1"><span class="xa-hide-col cp">X</span></td>
+				<td cid="2"><span class="xa-hide-col cp">X</span></td>
+				<td cid="3"><span class="xa-hide-col cp">X</span></td>
+				<td cid="4"><span class="xa-hide-col cp">X</span></td>
+				<td cid="5"><span class="xa-hide-col cp">X</span></td>
+				<td cid="6"><span class="xa-hide-col cp">X</span></td>
+				<td cid="7"><span class="xa-hide-col cp">X</span></td>
+				<td cid="8"><span class="xa-hide-col cp">X</span></td>
+				<td cid="9"><span class="xa-hide-col cp">X</span></td>
+				<td cid="10"><span class="xa-hide-col cp">X</span></td>
+				<td cid="11"><span class="xa-hide-col cp">X</span></td>
+				<td cid="12"><span class="xa-hide-col cp">X</span></td>
+				<td cid="13"><span class="xa-hide-col cp">X</span></td>
+			</tr>
+		</tbody>
+	</table>
+	{{else}}
+		<div class="xui-emptyBox mt10" style="border:solid 1px #ddd;">
+			<span class="ml20">目前还没有反馈意见</span>
+		</div>
+	{{/if}}
+	<br>
+</script>
+{% endverbatim %}
+
+<script type="text/javascript">
+$(document).delegate('.xa-hide-col','click',function(event) {
+	var $el = $(event.target);
+	var cid = $el.parent().attr('cid');
+	$('table tr').find('td:eq(' + cid + ')').hide();
+	$('table tr').find('th:eq(' + cid + ')').hide();
+});
+
+$(document).ready(function() {
+	
+	$('.xa-search').click(function(event) {
+		var nickname = $.trim($('[name="nickname"]').val());
+		var company = $.trim($('[name="company"]').val());
+		var company_name = $.trim($('.xa-company').find("option:selected").text());  //临时解决方案
+		var product = $.trim($('[name="product"]').val());
+		var product_name = $.trim($('.xa-product').find("option:selected").text());  //临时解决方案
+		var normalizedContent = $.trim($('[name="normalized_content"]').val());
+		var content = $.trim($('[name="content"]').val());
+		var systemAccount = $.trim($('[name="system_account"]').val());
+		var startDate = $.trim($('#start_date').val());
+		var endDate = $.trim($('#end_date').val());
+		var level = $.trim($('.xa-selectLevel').val());
+
+		if(startDate.length > 0 && endDate.length == 0){
+			W.showHint('error', '请输入结束日期!');
+			return;
+		}
+		if(endDate.length > 0 && startDate.length == 0){
+			W.showHint('error', '请输入开始日期!');
+			return;
+		}
+
+		var table = $('[data-ui-role="advanced-table"]').data('view');
+		table.reload({
+			nickname: nickname,
+			company: company,
+			company_name: company_name,  //临时解决方案
+			product: product,
+			product_name: product_name,  //临时解决方案
+			content: content,
+			normalized_content: normalizedContent,
+			system_account: systemAccount,
+			start_date: startDate,
+			end_date: endDate,
+			level: level
+		}, {
+			emptyDataHint: '没有符合条件的数据'
+		});
+	});
+	
+	$('.xa-reset').click(function(event) {
+		$('[name="content"]').val('');
+		$('[name="normalized_content"]').val('');
+		$('[name="company"]').val('-1');
+		$('[name="product"]').val('-1');
+		$('[name="nickname"]').val('');
+		$('[name="start_date"]').val('');
+		$('[name="end_date"]').val('');
+	});
+
+		// 组织导出的查询参数格式
+		var getArgsExportValueByDict = function(args) {
+		if (args.length == 0) {
+			return ""
+		} else {
+			for (var i = args.length - 1; i >= 0; i--) {
+				args[i] = args[i].replace(/"/g, '').replace(':', '=')
+			};
+			return args.join('&');
+		}
+	};
+
+	$('.xa-export').click(function(event) {
+		var nickname = $.trim($('[name="nickname"]').val());
+		var company = $.trim($('[name="company"]').val());
+		var company_name = $.trim($('.xa-company').find("option:selected").text());  //临时解决方案
+		var product = $.trim($('[name="product"]').val());
+		var product_name = $.trim($('.xa-product').find("option:selected").text());  //临时解决方案
+		var normalizedContent = $.trim($('[name="normalized_content"]').val());
+		var content = $.trim($('[name="content"]').val());
+		var systemAccount = $.trim($('[name="system_account"]').val());
+		var startDate = $.trim($('#start_date').val());
+		var endDate = $.trim($('#end_date').val());
+		var level = $.trim($('.xa-selectLevel').val());
+
+		if(startDate.length > 0 && endDate.length == 0){
+			W.showHint('error', '请输入结束日期!');
+			return;
+		}
+		if(endDate.length > 0 && startDate.length == 0){
+			W.showHint('error', '请输入开始日期!');
+			return;
+		}
+
+		var url = '/fans/suggestions_export/';
+		var args = [
+			"nickname:"+nickname,
+			"company:"+company,
+			"company_name:"+company_name,  //临时解决方案
+			"product:"+product,
+			"product_name:"+product_name,  //临时解决方案
+			"content:"+content,
+			"normalized_content:"+normalizedContent,
+			"system_account:"+systemAccount,
+			"start_date:"+startDate,
+			"end_date:"+endDate,
+			"level:"+level
+		];
+		args = getArgsExportValueByDict(args);
+		if (args.length > 0) {
+			url = url + '?'+args;
+		}
+		console.log(url, args)
+		window.open(url, '反馈意见导出', 'Window Settings');
+		//W.getLoadingView().show();
+		//$('#spin-hint').html('玩命导出中...');
+		//var $frame=$('<iframe>').hide().attr('src',url);
+		//$('body').append($frame);
+		//setTimeout(function(){W.getLoadingView().hide()}, 5000);
+	});
+
+	$('body').delegate('.xa-expand', 'click', function (event) {
+		var $el = $(event.target);
+		if ($el.attr('href') || $el.attr('name') === 'level' || $el.attr('name') === 'coupon') {
+			return;
+		} else {
+			event.stopPropagation();
+			event.preventDefault();
+			var $tr = $(event.currentTarget);
+			var id = $tr.data('id');
+			$('[data-related-suggestion-id="'+id+'"]').toggle(100);
+		}
+	});
+
+	$('body').delegate('.xa-delete', 'click', function (event) {
+		event.stopPropagation();
+		event.preventDefault();
+		var $link = $(event.target);
+		var $tr = $link.parents('tr');
+		var id = $tr.data('id');
+		var deleteData = function() {
+			W.getApi().call({
+				app: 'fans', 
+				resource: 'suggestion',
+				method: 'delete',
+				args: {
+					id: id
+				},
+				success: function(data) {
+					W.showHint('success', '删除成功!');
+					$tr.remove();
+				},
+				error: function(resp) {
+					W.showHint('error', '删除失败!');
+				}
+			})
+		}
+
+		W.requireConfirm({
+			$el: $link,
+			show_icon: false,
+			position:'top',
+			isTitle: false,
+			msg: '确认删除该数据？',
+			confirm: deleteData
+		});
+	});
+
+
+	$(".xa-searchPanel").delegate('.xa-company','change',function() {
+		$('.xa-product').empty();
+		$(".xa-product").append('<option value="-1">选择产品...</option>');
+		var companyId = $(".xa-company").val();
+		var companyName = $.trim($('.xa-company').find("option:selected").text());  //临时解决方案
+		W.getApi().call({
+			app: 'config', 
+			resource: 'products',
+			method: 'get',
+			args: {
+				// 'company_id': companyId
+				'company_name': companyName
+			},
+			success: function(data) {
+				var items = data.items;
+				for(x in items) {
+					var item = items[x];
+					$(".xa-product").append('<option value="' + item.id + '">' + item.name + '</option>');
+				}
+			},
+			error: function(resp) {
+				W.showHint('error', '获取商家产品列表失败!');
+			}
+		});
+	});
+
+
+	$(document).delegate('.xa-level', 'change', function (event) {
+		var $el = $(event.target);
+		var level = $el.val();
+		var suggestionId = $el.parent().parent().attr('data-id');
+		console.log('level:' + level);
+		console.log('suggestionId:' + suggestionId);
+		W.getApi().call({
+			app: 'fans', 
+			resource: 'suggestion',
+			method: 'post',
+			args: {
+				'id': suggestionId,
+				'level': level
+			},
+			success: function(data) {
+				if(level !== '') {
+					$el.parent().attr('data-level', level);
+					$el.parent().empty().append(level + '级&nbsp;&nbsp;&nbsp;&nbsp;<a class="xa-changeLevel" href="javascript:void(0);">修改</a>')
+				}
+				W.showHint('success', '更新意见级别成功!');
+			},
+			error: function(resp) {
+				W.showHint('error', '更新意见级别失败!');
+			}
+		});
+	});
+
+
+	$(document).delegate('.xa-coupon', 'change', function (event) {
+		var $el = $(event.target);
+		var ruleId = $el.val();
+		if(ruleId == '-1'){
+			$el.next().addClass('hidden');
+		} else {
+			$el.next().removeClass('hidden');
+		}
+	});
+
+
+	$(document).delegate('.xa-reward', 'click', function (event) {
+		var $current = $(event.target);
+		var suggestionId = $current.parent().parent().attr('data-id');
+		var fansId = $current.parent().parent().attr('fans-id');
+		if(!fansId || fansId.length == 0) {
+			alert('粉丝id获取失败！');
+			return;
+		}
+
+		var memberId = $current.parent().parent().attr('member-id');
+		if(!memberId || memberId.length == 0) {
+			alert('请先设置该粉丝的云商通会员id！');
+			return;
+		}
+		var couponRuleId = parseInt($current.prev().val());
+		var couponRuleName = $current.prev().find("option:selected").text();
+		var productName = $current.parent().parent().attr('product-name');
+		console.log('fansId:' + fansId);
+		console.log('memberId:' + memberId);
+		console.log('couponRuleId:' + couponRuleId);
+		console.log('couponRuleName:' + couponRuleName);
+		console.log('productName:' + productName);
+		var msg = '';
+		if(couponRuleId > 0){
+			msg = '确定要下发“' + couponRuleName + '”？';
+		} else if (couponRuleId === 0){
+			msg = '确定设置成无奖励？';
+		}
+		var rewardData = function() {
+			W.getApi().call({
+				app: 'fans', 
+				resource: 'coupon_sender',
+				method: 'put',
+				args: {
+					fans_id: fansId,
+					member_id: memberId,
+					suggestion_id: suggestionId,
+					coupon_rule_id: couponRuleId,
+					coupon_rule_name: couponRuleName,
+					product_name: productName
+				},
+				success: function(data) {
+					W.showHint('success', '发送优惠券成功!');
+					$current.parent().empty().append(couponRuleName);
+				},
+				error: function(resp) {
+					// W.showHint('error', '删除失败!');
+					console.log(resp);
+					alert(resp.data.errMsg);
+				}
+			});
+		}
+
+		W.requireConfirm({
+			$el: $current,
+			show_icon: false,
+			position:'top',
+			isTitle: false,
+			msg: msg,
+			confirm: rewardData
+		});
+	});
+
+
+	$(document).delegate('.xa-changeLevel', 'click', function (event) {
+		var $el = $(event.target);
+		var $td = $el.parent();
+		var level = $td.attr('data-level');
+
+		$td.empty().append('<select class="form-control w80 ml5 xa-level" name="level">' +
+							'<option value="">无</option>' + 
+							'<option value="A">A级</option>' + 
+							'<option value="B">B级</option>' + 
+							'<option value="C">C级</option>' + 
+							'<option value="D">D级</option>' + 
+						'</select>'
+					);
+
+		$td.find('.xa-level').val(level);
+	});
+
+
+
+	// 初始化日历控件
+	var addDatepicker = function() {
+		var _this = this;
+		$('input[data-ui-role="datepicker"]').each(function() {
+			var $datepicker = $(this);
+			var format = $datepicker.attr('data-format');
+			var min = $datepicker.attr('data-min');
+			var max = $datepicker.attr('data-max');
+			var $min_el = $($datepicker.attr('data-min-el'));
+			var $max_el = $($datepicker.attr('data-max-el'));
+			var options = {
+				buttonText: '选择日期',
+				currentText: '当前时间',
+				hourText: "小时",
+				minuteText: "分钟",
+				numberOfMonths: 1,
+				dateFormat: format,
+				//dateFormat: format,
+				closeText: '确定',
+				prevText: '&#x3c;上月',
+				nextText: '下月&#x3e;',
+				monthNames: ['一月','二月','三月','四月','五月','六月',
+					'七月','八月','九月','十月','十一月','十二月'],
+				monthNamesShort: ['一','二','三','四','五','六',
+					'七','八','九','十','十一','十二'],
+				dayNames: ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'],
+				dayNamesShort: ['周日','周一','周二','周三','周四','周五','周六'],
+				dayNamesMin: ['日','一','二','三','四','五','六'],
+				beforeShow: function(e) {
+					if(min === 'now') {
+						$(this).datepicker('option', 'minDate', new Date());
+					}else if(min){
+						$(this).datepicker('option', 'minDate', min);
+					}
+
+					if($min_el){
+						var startTime = $min_el.val();
+						if(startTime) {
+							$(this).datepicker('option', 'minDate', startTime);
+							$(this).datepicker('option', 'minDateTime', new Date(startTime));
+						}
+					}
+
+					if(max === 'now') {
+						$(this).datepicker('option', 'maxDate', new Date());
+					}else if(max){
+						$(this).datepicker('option', 'maxDate', max);
+					}
+
+					if($max_el){
+						var endTime = $max_el.val();
+						if(endTime) {
+							$(this).datepicker('option', 'maxDate', endTime);
+						}
+					}
+				},
+				onClose: function() {
+				}
+			};
+
+			$datepicker.datetimepicker(options);
+		});
+	};
+	addDatepicker();
+});
+</script>
+{% endblock %}
+

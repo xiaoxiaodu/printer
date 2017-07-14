@@ -1,0 +1,104 @@
+{% extends "content_base.html" %}
+
+{% block content-panel %}
+<div class="xui-suggestionProgressesPage">
+	<div class="relative">
+		<ul class="breadcrumb">
+			<li>您当前所在位置</li>
+			<li><a href="/fans/fanses/">粉丝</a></li>
+			<li><a href="/fans/fans/?id={{fans.id}}">{{fans.nickname}}详情</a></li>
+			<li class="active">改善进度</li>
+		</ul>
+	</div>
+
+	<div class="panel panel-default mt15">
+		<div class="panel-header">
+			反馈意见
+		</div>
+		<div class="panel-body">
+			<h2 class="xui-i-header">意见：</h2>
+			<div class="xui-i-content">{{suggestion.normalized_content|safe}}</div>
+
+			<h2 class="xui-i-header mt20">原始意见：</h2>
+			<div class="xui-i-content">{{suggestion.content|safe}}</div>
+		</div>
+	</div>
+	
+	<div class="panel panel-default mt15">
+		<div class="panel-header clearfix">
+			改善进度：
+		</div>
+		
+		<div class="panel-body panel-table pl15 pr15 mt0">
+			<table class="table table-bordered mb10">
+				<thead>
+					<tr>
+						<th>问题</th>
+						<th>改善方案</th>
+						<th width="100">答复用户</th>
+						<th width="80">处理人</th>
+						<th width="100">时间</th>
+						<th width="100">备注</th>
+						<th width="60">操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% if progresses %}
+					{% for progress in progresses %}
+					<tr data-id="{{progress.id}}">
+						<td>{{progress.problem}}</td>
+						<td>{{progress.solution}}</td>
+						<td>{{progress.reply}}</td>
+						<td>{{progress.actor.name}}</td>
+						<td>{{progress.created_at|date:'m-d H:i'}}</td>
+						<td>{{progress.remark}}</td>
+						<td>
+							<a href="javascript:void(0);" class="xa-delete btn btn-danger btn-xs">删除</a>
+						</td>
+					</tr>
+					{% endfor %}
+					{% else %}
+					<tr>
+						<td colspan="6">没有改善进度，请添加</td>
+					</tr>
+					{% endif %}
+				</tbody>
+			</table>
+			<div>
+				<a href="/fans/suggestion_progress/?suggestion_id={{suggestion.id}}" class="btn btn-primary">
+					<span class="glyphicon glyphicon-plus"></span> 添加进度
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+{% block js %}
+<script type="text/javascript">
+$(document).ready(function() {	
+	$('body').delegate('.xa-delete', 'click', function(event) {
+		var $link = $(event.currentTarget);
+		var $tr = $link.parents('tr');
+		var id = $tr.data('id');
+		W.getApi().call({
+			app: 'fans',
+			resource: 'suggestion_progress',
+			method: 'delete',
+			args: {
+				id: id,
+			},
+			success: function(data) {
+				W.showHint('success', '删除成功');
+				$tr.remove();
+			},
+			error: function(resp) {
+				W.showHint('success', '删除失败，请稍后再试!');	
+			}
+		})
+	})
+});
+</script>
+{% endblock %}
+

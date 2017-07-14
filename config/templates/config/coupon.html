@@ -1,0 +1,114 @@
+{% extends "content_base.html" %}
+
+{% block content-panel %}
+<div class="xui-fansPage">
+	<ul class="breadcrumb">
+		<li>您当前所在位置</li>
+		<li><a href="/config/sources/">配置</a></li>
+		<li><a href="/config/coupons/">优惠券</a></li>
+		<li class="active">{% if coupon %}更新优惠券{% else %}添加优惠券{% endif %}</li>
+	</ul>
+	
+	<form 
+		class="form-horizontal mt15 {% if fans %}xui-updateForm{% endif %}" 
+		method="post" 
+		id="editForm" 
+	>
+		<fieldset >
+			<legend>
+			</legend>
+			<div class="form-group ml15">
+				<label class="col-sm-1 " for="weapp_rule_id">优惠券规则id：</label>
+				<div class="col-sm-1">
+					<input type="text" class="form-control" id="weapp_rule_id" name="weapp_rule_id" placeholder="" value="{{coupon.weapp_rule_id}}" data-validate="require-int" maxlength="5"/>
+					<div class="errorHint"></div>
+				</div>
+			</div>
+			<div class="form-group ml15">
+				<label class=" col-sm-1 " for="name">优惠券名称：</label>
+				<div class="col-sm-4">
+					<input type="text" class="form-control" id="name" name="name" placeholder="" value="{{coupon.name}}" data-validate="require-string" maxlength="20"/>
+					<div class="errorHint"></div>
+				</div>
+			</div>
+			<div class="form-group ml15">
+				<label class=" col-sm-1 " for="money">优惠券价值：</label>
+				<div class="col-sm-1">
+					<input type="text" class="form-control" id="money" name="money" placeholder="" value="{{coupon.money}}" data-validate="require-price" maxlength="20"/>
+					<div class="errorHint"></div>
+				</div>
+			</div>
+
+			<div class="form-group ml15">
+				<span>优惠券规则id对应于云商通中的优惠券id，在“http://weapp.weizoom.com/mall2/coupon_rule_list/”页面点击
+					想要发放的优惠券后面的“码库”，此编辑页面url中id参数后面的数字即为优惠券规则id，<br/>如“http://weapp.weizoom.com/mall2/coupon_list/?id=6075”中优惠券规则id为6075，切记不要弄错，不然一旦发出去无法挽回，误发的损失请自行承担
+				</span>
+			</div>
+			
+			
+		</fieldset>
+		
+		<div class="mt20 tc">
+			<a class="btn btn-primary mr40 xa-submit xui-fontBold" href="javascript:void(0);">保 存</a>
+		</div>
+	</form>
+</div>
+{% endblock %}
+
+
+{% block js %}
+<script type="text/javascript">
+	var inUpdateMode = {% if coupon %}true{% else %}false{% endif %};
+	var objectId = "{{coupon.id}}";
+
+	$(document).ready(function() {
+		$('[name="rule_id"]').focus();
+
+		$('input').keypress(function(event) {
+			if (event.which === 13) {
+				event.preventDefault();
+				event.stopPropagation();
+				$('form').submit();
+			}
+		});
+
+		$('.xa-submit').click(function() {
+			if (!W.validate()) {
+				return;
+			}
+			$('form').submit();
+		});
+		
+		$('form').submit(function() {
+			var method = 'put';
+			if (inUpdateMode) {
+				method = 'post';
+			}
+
+			var $form = $('form');
+			var data = $form.serializeObject();
+			if (inUpdateMode) {
+				data['id'] = objectId;
+			}			
+
+			W.getApi().call({
+				app: 'config',
+				resource: 'coupon',
+				method: method,
+				args: data,
+				success: function(data) {
+					W.showHint('success', '优惠券创建成功！');
+					_.delay(function() {
+						window.location.href = '/config/coupons/';
+					}, 500);
+				},
+				error: function(resp) {
+					alert(resp.errMsg);
+				}
+			});
+			return false;
+		});
+	});
+</script>
+{% endblock %}
+
