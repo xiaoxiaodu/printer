@@ -1,4 +1,4 @@
-mysql -u skep --password=weizoom skep < rebuild_database.sql
+mysql -u printer --password=printer01 printer < rebuild_database.sql
 python manage.py syncdb --noinput
-mysql -u skep --password=weizoom skep < loc.sql
+mysql -u printer --password=printer01 printer < loc.sql
 pause

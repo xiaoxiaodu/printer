@@ -24,18 +24,6 @@ class UserProfile(models.Model):
 		db_table = 'account_user_profile'
 
 
-class GlobalSetting(models.Model):
-	"""
-	系统的全局配置
-	"""
-	super_password = models.CharField(max_length=50)
-
-	class Meta(object):
-		db_table = 'polaris_global_setting'
-		verbose_name = '全局配置'
-		verbose_name_plural = '全局配置'
-
-
 def create_profile(instance, created, **kwargs):
 	"""
 	自动创建user profile

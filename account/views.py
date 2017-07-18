@@ -40,7 +40,7 @@ def show_loading_page(request):
 #===============================================================================
 @login_required
 def index(request):
-	return HttpResponseRedirect('/fans/fanses/')
+	return HttpResponseRedirect('/mall/malls/')
 
 
 #===============================================================================

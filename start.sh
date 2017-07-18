@@ -1,2 +1,2 @@
 #!/bin/bash
-uwsgi --ini /skep/skep/skep.ini
+uwsgi --ini /printer/printer/printer.ini

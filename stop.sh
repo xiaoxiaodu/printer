@@ -1,2 +1,2 @@
 #!/bin/bash
-uwsgi --stop /skep/skep.pid
+uwsgi --stop /printer/printer.pid
