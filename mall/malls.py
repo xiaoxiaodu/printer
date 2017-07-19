@@ -36,7 +36,12 @@ class Malls(resource.Resource):
 		响应API GET
 		"""
 		name = request.GET.get('name', '')
-		malls = Mall.objects.filter(name__icontains=name).order_by('-id')	
+		params = {
+			'is_deleted': False
+		}
+		if name:
+			params['name__icontains'] = name
+		malls = Mall.objects.filter(**params).order_by('-id')	
 		
 		#进行分页
 		count_per_page = int(request.GET.get('count_per_page', COUNT_PER_PAGE))
@@ -46,6 +51,7 @@ class Malls(resource.Resource):
 		items = []
 		for mall in malls:
 			items.append({
+				'id': mall.id,
 				'name': mall.name,
 				'remark': mall.remark,
 				'created_at': mall.created_at.strftime("%Y-%m-%d %H:%M:%S")

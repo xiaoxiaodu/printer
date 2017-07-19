@@ -108,7 +108,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 
-    'core.middleware.ManagerMiddleware',
+    # 'core.middleware.ManagerMiddleware',
 
     # REST resorce manage
     'core.resource_middleware.ResourceJsMiddleware',
