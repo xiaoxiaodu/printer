@@ -1,0 +1,158 @@
+{% extends "content_base.html" %}
+
+{% block content-panel %}
+<div class="xui-totalSuggestionsPage">
+	<div class="relative">
+		<ul class="breadcrumb">
+			<li>您当前所在位置</li>
+			<li><a href="/mall/malls/">商户</a></li>
+			<li class="active">商品</li>
+		</ul>
+	</div>
+
+	<div class="xui-searchPanel xa-searchPanel mt15 form-horizontal panel panel-default">
+		<fieldset class="mt10">
+
+			<div class="xui-form-row mt10">
+				
+				<div class="xui-form-item clearfix">
+					<label class="control-label fl" for="nickname">商品名称</label>
+					<div class="fl">
+						<input 
+							type="text" 
+							class="form-control w150 ml5" 
+							id="name" 
+							name="name"
+						/>
+					</div>
+					<div class="fl ml10">
+						<a href="javascript:void(0);" class="btn btn-primary xa-search">查询</a>
+					</div>
+				</div>
+			</div>
+		</fieldset>
+	</div>
+
+	
+	<div class="panel panel-default xui-panel-table pl15 pr15 mt15">
+		<div class="panel-header clearfix">
+			<a href="/mall/product/?mid={{mall_id}}" target="_blank" class="btn btn-success fr">
+				<span class="glyphicon glyphicon-plus"></span> 添加商品
+			</a>
+		</div>	
+		<div 
+			class="panel-body panel-table p0 mt5 pt10"
+			data-ui-role="advanced-table" 
+			data-app="mall" 
+			data-resource="products" 
+			data-template-id="#table" 
+			data-enable-paginator="true" 
+			data-enable-sort="false" 
+			data-selectable="false" 
+			data-disable-header-select="true" 
+			data-item-count-per-page="50" 
+			data-auto-load="false" 
+			data-args='{"mid": {{mall_id}}}'
+		>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+{% block js %}
+{% verbatim %}
+<script id="table" type="text/x-jquery-tmpl">
+	{{if items!='' }}
+	<table class="table table-bordered mb10 mt10 xui-i-table">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>商品名称</th>
+				<th>商品价格</th>
+				<th>商品描述</th>
+				<th>创建时间</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			{{each(i, product) items}}
+			<tr data-id="${product.id}" data-mid="${product.mall_id}" class="xui-i-expandable xa-expand">
+				<td>${i + 1}</td>
+				<td>${product.name}</a></td>
+				<td>${product.price}</td>
+				<td>${product.desc}</td>
+				<td>${product.created_at}</td>
+				<td>
+					<a target="_blank" href="/mall/product/?mid=${product.mall_id}&id=${product.id}" class="btn btn-default btn-xs">编辑</a>
+					<a href="javascript:void(0);" class="btn btn-danger btn-xs xa-delete">删除</a>
+				</td>
+			</tr>
+			{{/each}}
+		</tbody>
+	</table>
+	{{else}}
+		<div class="xui-emptyBox mt10" style="border:solid 1px #ddd;">
+			<span class="ml20">该商户还没有商品</span>
+		</div>
+	{{/if}}
+	<br>
+</script>
+{% endverbatim %}
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+	
+	$('.xa-search').click(function(event) {
+		var name = $.trim($('[name="name"]').val());
+
+		var table = $('[data-ui-role="advanced-table"]').data('view');
+		table.reload({
+			name: name
+		}, {
+			emptyDataHint: '没有符合条件的数据'
+		});
+	});
+
+	$('body').delegate('.xa-delete', 'click', function (event) {
+		event.stopPropagation();
+		event.preventDefault();
+		var $link = $(event.target);
+		var $tr = $link.parents('tr');
+		var id = $tr.data('id');
+		var mid = $tr.data('mid');
+
+		var deleteData = function() {
+			W.getApi().call({
+				app: 'mall', 
+				resource: 'product',
+				method: 'delete',
+				args: {
+					id: id,
+					mid: mid
+				},
+				success: function(data) {
+					W.showHint('success', '删除成功!');
+					var table = $('[data-ui-role="advanced-table"]').data('view');
+					table.reload();
+				},
+				error: function(resp) {
+					W.showHint('error', '删除失败!');
+				}
+			})
+		}
+
+		W.requireConfirm({
+			$el: $link,
+			show_icon: false,
+			position:'top',
+			isTitle: false,
+			msg: '确认删除该数据？',
+			confirm: deleteData
+		});
+	});
+});
+</script>
+{% endblock %}
+

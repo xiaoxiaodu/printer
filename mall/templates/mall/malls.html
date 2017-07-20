@@ -76,11 +76,12 @@
 			{{each(i, mall) items}}
 			<tr data-id="${mall.id}" class="xui-i-expandable xa-expand">
 				<td>${i + 1}</td>
-				<td>${mall.name}</a></td>
+				<td><a href="/mall/products/?mid=${mall.id}" target="_blank" title="点击查看商品列表">${mall.name}</a></td>
 				<td>${mall.remark}</td>
 				<td>${mall.created_at}</td>
 				<td>
-					<a target="_blank" href="/mall/mall/?id=${mall.id}" class="btn btn-default btn-xs">编辑</a>
+					<a target="_blank" href="/mall/products/?mid=${mall.id}" class="btn btn-info btn-xs">查看商品</a>
+					<a target="_blank" href="/mall/mall/?id=${mall.id}" class="btn btn-warning btn-xs">编辑</a>
 					<a href="javascript:void(0);" class="btn btn-danger btn-xs xa-delete">删除</a>
 				</td>
 			</tr>

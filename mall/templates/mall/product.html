@@ -6,7 +6,7 @@
 	<ul class="breadcrumb">
 		<li>您当前所在位置</li>
 		<li><a href="/mall/malls/">商户</a></li>
-		<li class="active">新建商户</li>
+		<li class="active">新建商品</li>
 	</ul>
 	
 	<form 
@@ -17,40 +17,47 @@
 	>
 		<fieldset >
 			<legend class="pl15 pb5 pt5">
-				新建商户
+				新建商品
 			</legend>
 			<div class="form-group clearfix">
-				<label class="control-label col-sm-2" for="company">名称</label>
+				<label class="control-label col-sm-2" for="name">名称</label>
 				<div class="col-sm-4">
-					<input type="text" name="name" class="form-control ml5" data-validate="require-notempty" value="{{mall.name}}"/>
-					<div class="errorHint ml5" data-error-hint="请输入商户名称"></div>
+					<input type="text" name="name" class="form-control ml5" data-validate="require-notempty" value="{{product.name}}"/>
+					<div class="errorHint ml5" data-error-hint="请输入商品名称"></div>
 				</div>
 			</div>
 			<div class="form-group clearfix">
-				<label class="control-label col-sm-2" for="remark">备注</label>
+				<label class="control-label col-sm-2" for="price">价格</label>
 				<div class="col-sm-4">
-					<textarea
-						name="remark"
-						class="form-control ml5"
-						style="width:100%; min-height:80px;" 
-					>{{mall.remark}}</textarea>
+					<input type="text" name="price" class="form-control ml5" data-validate="require-price" value="{{product.price}}"/>
+					<div class="errorHint ml5" data-error-hint="请输入商品价格"></div>
 				</div>
 			</div>
-
+			<div class="form-group clearfix">
+				<label class="control-label col-sm-2" for="desc">商品描述</label>
+				<div class="col-sm-4">
+					<textarea
+						name="desc"
+						class="form-control ml5"
+						style="width:100%; min-height:80px;" 
+					>{{product.desc}}</textarea>
+				</div>
+			</div>
 		</fieldset>
-		
-		<div class="mt20 tc">
-			<a class="btn btn-primary mr40 xa-submit xui-fontBold" href="javascript:void(0);">保 存</a>
-		</div>
 	</form>
+	
+	<div class="mt20 tc">
+		<a class="btn btn-primary mr40 xa-submit xui-fontBold" href="javascript:void(0);">保 存</a>
+	</div>
 </div>
 {% endblock %}
 
 
 {% block js %}
 <script type="text/javascript">
-	var inUpdateMode = {% if mall %}true{% else %}false{% endif %};
-	var objectId = "{{mall.id}}";
+	var inUpdateMode = {% if product %}true{% else %}false{% endif %};
+	var objectId = "{{product.id}}";
+	var mid = "{{mall_id}}";
 
 	$(document).ready(function() {
 		$('.xa-tabs a').click(function (e) {
@@ -73,16 +80,17 @@
 			if (inUpdateMode) {
 				data['id'] = objectId;
 			}
+			data['mid'] = mid;
 
 			W.getApi().call({
 				app: 'mall',
-				resource: 'mall',
+				resource: 'product',
 				method: method,
 				args: data,
 				success: function(data) {
 					W.showHint('success', '操作成功');
 					_.delay(function() {
-						window.location.href = '/mall/malls/';
+						window.location.href = '/mall/products/?mid={{mall_id}}';
 					}, 500);
 				},
 				error: function(resp) {

@@ -25,7 +25,7 @@ class Mall(resource.Resource):
 		mall_id = request.GET.get('id', None)
 		mall_data = None
 		if mall_id:
-			mall = mall_models.Mall.objects.get(id=mall_id)
+			mall = mall_models.Mall.objects.get(owner=request.user, id=mall_id)
 			mall_data = {
 				'id': mall_id,
 				'name': mall.name,
@@ -62,7 +62,7 @@ class Mall(resource.Resource):
 		name = request.POST.get('name')
 		remark = request.POST.get('remark')
 
-		mall_models.Mall.objects.filter(id=mall_id).update(name=name, remark=remark)
+		mall_models.Mall.objects.filter(owner=request.user, id=mall_id).update(name=name, remark=remark)
 
 		response = create_response(200)
 		return response.get_response()
@@ -75,7 +75,7 @@ class Mall(resource.Resource):
 		mall_id = request.POST.get('id')
 		print '============',mall_id
 
-		mall_models.Mall.objects.filter(id=mall_id).update(is_deleted=True)
+		mall_models.Mall.objects.filter(owner=request.user, id=mall_id).update(is_deleted=True)
 
 		response = create_response(200)
 		return response.get_response()
