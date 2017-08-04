@@ -5,24 +5,24 @@
 <div class="xui-suggestionPage">
 	<ul class="breadcrumb">
 		<li>您当前所在位置</li>
-		<li><a href="/mall/malls/">商户</a></li>
-		<li class="active">新建商户</li>
+		<li><a href="/mall/members/">会员</a></li>
+		<li class="active">新建会员</li>
 	</ul>
 	
 	<form 
-		class="form-horizontal mt15 {% if mall %}xui-updateForm{% endif %}" 
+		class="form-horizontal mt15 {% if member %}xui-updateForm{% endif %}" 
 		method="post" 
 		id="editForm" 
 	>
 		<fieldset >
 			<legend class="pl15 pb5 pt5">
-				新建商户
+				新建会员
 			</legend>
 			<div class="form-group clearfix">
-				<label class="control-label col-sm-2" for="company">名称</label>
+				<label class="control-label col-sm-2" for="company">姓名</label>
 				<div class="col-sm-4">
-					<input type="text" name="name" class="form-control ml5" data-validate="require-notempty" value="{{mall.name}}"/>
-					<div class="errorHint ml5" data-error-hint="请输入商户名称"></div>
+					<input type="text" name="name" class="form-control ml5" data-validate="require-notempty" value="{{member.name}}"/>
+					<div class="errorHint ml5" data-error-hint="请输入会员姓名"></div>
 				</div>
 			</div>
 			<div class="form-group clearfix">
@@ -32,7 +32,7 @@
 						name="remark"
 						class="form-control ml5"
 						style="width:100%; min-height:80px;" 
-					>{{mall.remark}}</textarea>
+					>{{member.remark}}</textarea>
 				</div>
 			</div>
 
@@ -48,8 +48,8 @@
 
 {% block js %}
 <script type="text/javascript">
-	var inUpdateMode = {% if mall %}true{% else %}false{% endif %};
-	var objectId = "{{mall.id}}";
+	var inUpdateMode = {% if member %}true{% else %}false{% endif %};
+	var objectId = "{{member.id}}";
 
 	$(document).ready(function() {
 		$('.xa-tabs a').click(function (e) {
@@ -75,13 +75,13 @@
 
 			W.getApi().call({
 				app: 'mall',
-				resource: 'mall',
+				resource: 'member',
 				method: method,
 				args: data,
 				success: function(data) {
-					W.showHint('success', '操作成功');
+					W.showHint('success', '操作成功！');
 					_.delay(function() {
-						window.location.href = '/mall/malls/';
+						window.location.href = '/mall/members/';
 					}, 500);
 				},
 				error: function(resp) {

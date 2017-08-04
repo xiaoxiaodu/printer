@@ -50,6 +50,7 @@ class Member(models.Model):
 	name = models.CharField(max_length=128)  #商品名称
 	phone = models.CharField(max_length=20, default='')  #手机号
 	addr = models.CharField(max_length=128, default='')  #地址
+	remark = models.CharField(max_length=256, default='')  #备注
 	is_deleted = models.BooleanField(default=False) #是否删除
 	created_at = models.DateTimeField(auto_now_add=True)
 

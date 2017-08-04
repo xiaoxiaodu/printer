@@ -1,0 +1,232 @@
+{% extends "content_base.html" %}
+
+{% block content-panel %}
+<div class="xui-totalSuggestionsPage">
+	<div class="relative">
+		<ul class="breadcrumb">
+			<li>您当前所在位置</li>
+			<li class="active">会员列表</li>
+		</ul>
+	</div>
+
+	<div class="xui-searchPanel xa-searchPanel mt15 form-horizontal panel panel-default">
+		<fieldset class="mt10">
+
+			<div class="xui-form-row mt10">
+				
+				<div class="xui-form-item clearfix">
+					<label class="control-label fl" for="name">会员姓名</label>
+					<div class="fl">
+						<input 
+							type="text" 
+							class="form-control w150 ml5" 
+							id="name" 
+							name="name"
+						/>
+					</div>
+					<label class="control-label fl" for="phone">手机号</label>
+					<div class="fl">
+						<input 
+							type="text" 
+							class="form-control w150 ml5" 
+							id="phone" 
+							name="phone"
+						/>
+					</div>
+					<div class="fl ml10">
+						<a href="javascript:void(0);" class="btn btn-primary xa-search">查询</a>
+					</div>
+				</div>
+			</div>
+		</fieldset>
+	</div>
+
+	
+	<div class="panel panel-default xui-panel-table pl15 pr15 mt15">
+		<div class="panel-header clearfix">
+			<a href="/mall/member/" target="_blank" class="btn btn-success fr">
+				<span class="glyphicon glyphicon-plus"></span> 添加会员
+			</a>
+		</div>	
+		<div 
+			class="panel-body panel-table p0 mt5 pt10"
+			data-ui-role="advanced-table" 
+			data-app="mall" 
+			data-resource="members" 
+			data-template-id="#table" 
+			data-enable-paginator="true" 
+			data-enable-sort="false" 
+			data-selectable="false" 
+			data-disable-header-select="true" 
+			data-item-count-per-page="50" 
+			data-auto-load="false"
+		>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+{% block js %}
+{% verbatim %}
+<script id="table" type="text/x-jquery-tmpl">
+	{{if items!='' }}
+	<table class="table table-bordered mb10 mt10 xui-i-table">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>姓名</th>
+				<th>手机号</th>
+				<th>地址</th>
+				<th>备注</th>
+				<th>创建时间</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			{{each(i, member) items}}
+			<tr data-id="${mall.id}" class="xui-i-expandable xa-expand">
+				<td>${i + 1}</td>
+				<td><a href="/mall/member/?id=${member.id}" target="_blank" title="点击编辑会员信息">${member.name}</a></td>
+				<td>${member.phone}</td>
+				<td>${member.addr}</td>
+				<td>${member.remark}</td>
+				<td>${member.created_at}</td>
+				<td>
+					<a target="_blank" href="/mall/member/?id=${member.id}&buy=1" class="btn btn-info btn-xs">购买商品</a>
+					<a target="_blank" href="/mall/member/?id=${member.id}" class="btn btn-warning btn-xs">编辑</a>
+					<a href="javascript:void(0);" class="btn btn-danger btn-xs xa-delete">删除</a>
+				</td>
+			</tr>
+			{{/each}}
+		</tbody>
+	</table>
+	{{else}}
+		<div class="xui-emptyBox mt10" style="border:solid 1px #ddd;">
+			<span class="ml20">目前还没有会员</span>
+		</div>
+	{{/if}}
+	<br>
+</script>
+{% endverbatim %}
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+	
+	$('.xa-search').click(function(event) {
+		var name = $.trim($('[name="name"]').val());
+
+		var table = $('[data-ui-role="advanced-table"]').data('view');
+		table.reload({
+			name: name
+		}, {
+			emptyDataHint: '没有符合条件的数据'
+		});
+	});
+
+	$('body').delegate('.xa-delete', 'click', function (event) {
+		event.stopPropagation();
+		event.preventDefault();
+		var $link = $(event.target);
+		var $tr = $link.parents('tr');
+		var id = $tr.data('id');
+
+		var deleteData = function() {
+			W.getApi().call({
+				app: 'mall', 
+				resource: 'member',
+				method: 'delete',
+				args: {
+					id: id
+				},
+				success: function(data) {
+					W.showHint('success', '删除成功!');
+					var table = $('[data-ui-role="advanced-table"]').data('view');
+					table.reload();
+				},
+				error: function(resp) {
+					W.showHint('error', '删除失败!');
+				}
+			})
+		}
+
+		W.requireConfirm({
+			$el: $link,
+			show_icon: false,
+			position:'top',
+			isTitle: false,
+			msg: '确认删除该数据？',
+			confirm: deleteData
+		});
+	});
+
+
+	// 初始化日历控件
+	var addDatepicker = function() {
+		var _this = this;
+		$('input[data-ui-role="datepicker"]').each(function() {
+			var $datepicker = $(this);
+			var format = $datepicker.attr('data-format');
+			var min = $datepicker.attr('data-min');
+			var max = $datepicker.attr('data-max');
+			var $min_el = $($datepicker.attr('data-min-el'));
+			var $max_el = $($datepicker.attr('data-max-el'));
+			var options = {
+				buttonText: '选择日期',
+				currentText: '当前时间',
+				hourText: "小时",
+				minuteText: "分钟",
+				numberOfMonths: 1,
+				dateFormat: format,
+				//dateFormat: format,
+				closeText: '确定',
+				prevText: '&#x3c;上月',
+				nextText: '下月&#x3e;',
+				monthNames: ['一月','二月','三月','四月','五月','六月',
+					'七月','八月','九月','十月','十一月','十二月'],
+				monthNamesShort: ['一','二','三','四','五','六',
+					'七','八','九','十','十一','十二'],
+				dayNames: ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'],
+				dayNamesShort: ['周日','周一','周二','周三','周四','周五','周六'],
+				dayNamesMin: ['日','一','二','三','四','五','六'],
+				beforeShow: function(e) {
+					if(min === 'now') {
+						$(this).datepicker('option', 'minDate', new Date());
+					}else if(min){
+						$(this).datepicker('option', 'minDate', min);
+					}
+
+					if($min_el){
+						var startTime = $min_el.val();
+						if(startTime) {
+							$(this).datepicker('option', 'minDate', startTime);
+							$(this).datepicker('option', 'minDateTime', new Date(startTime));
+						}
+					}
+
+					if(max === 'now') {
+						$(this).datepicker('option', 'maxDate', new Date());
+					}else if(max){
+						$(this).datepicker('option', 'maxDate', max);
+					}
+
+					if($max_el){
+						var endTime = $max_el.val();
+						if(endTime) {
+							$(this).datepicker('option', 'maxDate', endTime);
+						}
+					}
+				},
+				onClose: function() {
+				}
+			};
+
+			$datepicker.datetimepicker(options);
+		});
+	};
+	addDatepicker();
+});
+</script>
+{% endblock %}
+
