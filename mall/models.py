@@ -49,7 +49,6 @@ class Member(models.Model):
 	owner = models.ForeignKey(User)
 	name = models.CharField(max_length=128)  #商品名称
 	phone = models.CharField(max_length=20, default='')  #手机号
-	addr = models.CharField(max_length=128, default='')  #地址
 	remark = models.CharField(max_length=256, default='')  #备注
 	is_deleted = models.BooleanField(default=False) #是否删除
 	created_at = models.DateTimeField(auto_now_add=True)
@@ -60,17 +59,17 @@ class Member(models.Model):
 		verbose_name_plural = '会员'
 
 
-class MemberHasMall(models.Model):
-	"""
-	会员-商家
-	"""
-	member = models.ForeignKey(Member)
-	mall = models.ForeignKey(Mall) # 所属哪个商户
+# class MemberHasMall(models.Model):
+# 	"""
+# 	会员-商家
+# 	"""
+# 	member = models.ForeignKey(Member)
+# 	mall = models.ForeignKey(Mall) # 所属哪个商户
 
-	class Meta(object):
-		db_table = 'member_has_mall'
-		verbose_name = '会员-商家'
-		verbose_name_plural = '会员-商家'
+# 	class Meta(object):
+# 		db_table = 'member_has_mall'
+# 		verbose_name = '会员-商家'
+# 		verbose_name_plural = '会员-商家'
 
 
 class MemberHasCard(models.Model):
@@ -78,8 +77,9 @@ class MemberHasCard(models.Model):
 	会员-银行卡
 	"""
 	member = models.ForeignKey(Member)
-	card_id = models.CharField(max_length=32, default='')  #卡号
+	card_number = models.CharField(max_length=32, default='')  #卡号
 	bank_name = models.CharField(max_length=32, default='')  #发卡行名称
+	is_deleted = models.BooleanField(default=False) #是否删除
 
 	class Meta(object):
 		db_table = 'member_has_card'

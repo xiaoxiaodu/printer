@@ -73,7 +73,6 @@ class Mall(resource.Resource):
 		删除商户
 		"""
 		mall_id = request.POST.get('id')
-		print '============',mall_id
 
 		mall_models.Mall.objects.filter(owner=request.user, id=mall_id).update(is_deleted=True)
 

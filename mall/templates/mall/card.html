@@ -1,0 +1,197 @@
+{% extends "content_base.html" %}
+
+{% block content-panel %}
+<div class="xui-totalSuggestionsPage">
+	<div class="relative">
+		<ul class="breadcrumb">
+			<li>您当前所在位置</li>
+			<li><a href="/mall/members/">会员</a></li>
+			<li class="active">银行卡</li>
+		</ul>
+	</div>
+
+	<div class="xui-searchPanel xa-searchPanel mt15 form-horizontal panel panel-default">
+		<fieldset class="mt10">
+
+			<div class="xui-form-row mt10">
+				
+				<div class="clearfix">
+					<label class="control-label fl" for="bank_name">银行</label>
+					<div class="fl xa-bank">
+						<select class="form-control ml5" name="bank_name">
+							<option value="">选择银行...</option>
+							<option value="工商银行">工商银行</option>
+							<option value="建设银行">建设银行</option>
+							<option value="农业银行">农业银行</option>
+							<option value="交通银行">交通银行</option>
+							<option value="招商银行">招商银行</option>
+							<option value="中国银行">中国银行</option>
+							<option value="民生银行">民生银行</option>
+							<option value="华夏银行">华夏银行</option>
+							<option value="北京银行">北京银行</option>
+							<option value="兴业银行">兴业银行</option>
+							<option value="光大银行">光大银行</option>
+							<option value="浦发银行">浦发银行</option>
+							<option value="广发银行">广发银行</option>
+							<option value="中信银行">中信银行</option>
+							<option value="邮储银行">邮储银行</option>
+							<option value="花旗银行">花旗银行</option>
+							<option value="上海银行">上海银行</option>
+						</select>
+					</div>
+					<small class="fl ml15 mt10 xa-bank-input"><a href="javascript:void(0);">点我手输银行</a></small>
+
+					<label class="control-label fl" for="card_number">卡号</label>
+					<div class="fl">
+						<input 
+							type="text" 
+							class="form-control w250 ml5" 
+							id="card_number" 
+							name="card_number"
+						/>
+					</div>
+					<div class="fl ml10">
+						<a href="javascript:void(0);" class="btn btn-primary xa-add">添加</a>
+					</div>
+				</div>
+			</div>
+		</fieldset>
+	</div>
+
+	
+	<div class="panel panel-default xui-panel-table pl15 pr15 mt15">
+		<div 
+			class="panel-body panel-table p0 mt5 pt10"
+			data-ui-role="advanced-table" 
+			data-app="mall" 
+			data-resource="card" 
+			data-template-id="#table" 
+			data-enable-paginator="true" 
+			data-enable-sort="false" 
+			data-selectable="false" 
+			data-disable-header-select="true" 
+			data-item-count-per-page="20" 
+			data-auto-load="false" 
+			data-args='{"mid": {{member_id}}}'
+		>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+{% block js %}
+{% verbatim %}
+<script id="table" type="text/x-jquery-tmpl">
+	{{if items!='' }}
+	<table class="table table-bordered mb10 mt10 xui-i-table">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>银行</th>
+				<th>卡号</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			{{each(i, card) items}}
+			<tr data-id="${card.id}">
+				<td>${i + 1}</td>
+				<td>${card.bank_name}</td>
+				<td>${card.card_number}</td>
+				<td>
+					<a href="javascript:void(0);" class="btn btn-danger btn-xs xa-delete">删除</a>
+				</td>
+			</tr>
+			{{/each}}
+		</tbody>
+	</table>
+	{{else}}
+		<div class="xui-emptyBox mt10" style="border:solid 1px #ddd;">
+			<span class="ml20">该会员还没有银行卡</span>
+		</div>
+	{{/if}}
+	<br>
+</script>
+{% endverbatim %}
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+	
+	$('.xa-add').click(function(event) {
+		var bank_name = $.trim($('[name="bank_name"]').val());
+		var card_number = $.trim($('[name="card_number"]').val());
+		if(bank_name == ""){
+			alert("银行不能为空！");
+			return;
+		}
+		if(card_number == ""){
+			alert("卡号不能为空！");
+			return;
+		}
+
+		W.getApi().call({
+			app: 'mall',
+			resource: 'card',
+			method: 'put',
+			args: {
+				member_id: {{member_id}},
+				bank_name: bank_name,
+				card_number: card_number
+			},
+			success: function(data) {
+				var table = $('[data-ui-role="advanced-table"]').data('view');
+				table.reload();
+			},
+			error: function(resp) {
+				alert(resp.errMsg);
+			}
+		});
+	});
+
+	$('.xa-bank-input').click(function(event) {
+		$('.xa-bank').empty();
+		$('.xa-bank').html('<div class="fl"><input type="text" class="form-control w250 ml5" id="bank_name" name="bank_name"/></div>');
+		$('.xa-bank-input').hide();
+	});
+
+	$('body').delegate('.xa-delete', 'click', function (event) {
+		event.stopPropagation();
+		event.preventDefault();
+		var $link = $(event.target);
+		var $tr = $link.parents('tr');
+		var id = $tr.data('id');
+
+		var deleteData = function() {
+			W.getApi().call({
+				app: 'mall', 
+				resource: 'card',
+				method: 'delete',
+				args: {
+					id: id
+				},
+				success: function(data) {
+					W.showHint('success', '删除成功!');
+					var table = $('[data-ui-role="advanced-table"]').data('view');
+					table.reload();
+				},
+				error: function(resp) {
+					W.showHint('error', '删除失败!');
+				}
+			})
+		}
+
+		W.requireConfirm({
+			$el: $link,
+			show_icon: false,
+			position:'top',
+			isTitle: false,
+			msg: '确认删除该数据？',
+			confirm: deleteData
+		});
+	});
+});
+</script>
+{% endblock %}
+

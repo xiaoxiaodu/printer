@@ -11,7 +11,7 @@ import models as mall_models
 import export
 
 FIRST_NAV = export.FIRST_NAV
-SECOND_NAV = 'malls'
+SECOND_NAV = 'members'
 COUNT_PER_PAGE = 50
 
 class Members(resource.Resource):
@@ -56,6 +56,7 @@ class Members(resource.Resource):
 			items.append({
 				'id': member.id,
 				'name': member.name,
+				'phone': member.phone,
 				'remark': member.remark,
 				'created_at': member.created_at.strftime("%Y-%m-%d %H:%M:%S")
 			})

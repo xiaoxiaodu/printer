@@ -6,5 +6,9 @@ import malls
 import mall
 import products
 import product
+import member
+import members
+import card
+import buy
 urlpatterns = patterns('',
 )

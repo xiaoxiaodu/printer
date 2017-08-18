@@ -77,7 +77,6 @@
 				<th>#</th>
 				<th>姓名</th>
 				<th>手机号</th>
-				<th>地址</th>
 				<th>备注</th>
 				<th>创建时间</th>
 				<th>操作</th>
@@ -85,15 +84,16 @@
 		</thead>
 		<tbody>
 			{{each(i, member) items}}
-			<tr data-id="${mall.id}" class="xui-i-expandable xa-expand">
+			<tr data-id="${member.id}">
 				<td>${i + 1}</td>
 				<td><a href="/mall/member/?id=${member.id}" target="_blank" title="点击编辑会员信息">${member.name}</a></td>
 				<td>${member.phone}</td>
-				<td>${member.addr}</td>
 				<td>${member.remark}</td>
 				<td>${member.created_at}</td>
 				<td>
-					<a target="_blank" href="/mall/member/?id=${member.id}&buy=1" class="btn btn-info btn-xs">购买商品</a>
+					<a target="_blank" href="/mall/buy/?mid=${member.id}" class="btn btn-info btn-xs">购买商品</a>
+					<a target="_blank" href="/mall/card/?mid=${member.id}" class="btn btn-success btn-xs">管理银行卡</a>
+					<!-- <a target="_blank" href="/mall/member_mall/?mid=${member.id}" class="btn btn-primary btn-xs">管理商户</a> -->
 					<a target="_blank" href="/mall/member/?id=${member.id}" class="btn btn-warning btn-xs">编辑</a>
 					<a href="javascript:void(0);" class="btn btn-danger btn-xs xa-delete">删除</a>
 				</td>
@@ -116,10 +116,12 @@ $(document).ready(function() {
 	
 	$('.xa-search').click(function(event) {
 		var name = $.trim($('[name="name"]').val());
+		var phone = $.trim($('[name="phone"]').val());
 
 		var table = $('[data-ui-role="advanced-table"]').data('view');
 		table.reload({
-			name: name
+			name: name,
+			phone: phone
 		}, {
 			emptyDataHint: '没有符合条件的数据'
 		});

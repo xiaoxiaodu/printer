@@ -1,0 +1,200 @@
+{% extends "content_base.html" %}
+
+{% block content-panel %}
+<div class="xui-totalSuggestionsPage">
+	<div class="relative">
+		<ul class="breadcrumb">
+			<li>您当前所在位置</li>
+			<li><a href="/mall/members/">会员</a></li>
+			<li class="active">购买商品</li>
+		</ul>
+	</div>
+
+	<div class="xui-searchPanel xa-searchPanel mt15 form-horizontal panel panel-default">
+		<fieldset class="mt10">
+
+			<div class="xui-form-row mt10">
+				
+				<div class="clearfix">
+					<label class="control-label fl" for="mall">商户</label>
+					<div class="fl xa-bank">
+						<select class="form-control ml5" name="mall">
+							<option value="-1">请选择商户...</option>
+							{% for mall in malls %}
+							<option value="{{mall.id}}">{{mall.name}}</option>
+							{% endfor %}
+						</select>
+					</div>
+					<div class="fl ml10">
+						<a href="javascript:void(0);" class="btn btn-primary xa-submit">确定</a>
+					</div>
+				</div>
+			</div>
+		</fieldset>
+	</div>
+
+	<div class="xui-searchPanel pl15 pr15 mt15 form-horizontal panel panel-default">
+		<table class="table table-bordered mb10">
+			<thead>
+				<tr>
+					<th>商品名称</th>
+					<th>单价</th>
+					<th>数量</th>
+					<th>小计</th>
+				</tr>
+			</thead>
+			<tbody class="xa-product-list">
+				<tr class="xa-no-product"><td colspan="4"><span>还没有选择商品</span></td></tr>
+			</tbody>
+		</table>
+		<hr>
+		<div class="fl mt10 mr10"><span>总计：</span><span class="xa-total-price">0</span><span>元</span></div>
+		<label class="control-label fl" for="mall">银行卡</label>
+		<div class="fl xa-bank">
+			<select class="form-control ml5" name="mall">
+				<option value="-1">请选择银行卡...</option>
+				{% for card in cards %}
+				<option value="{{card.id}}">{{card.bank_name}} &nbsp; {{card.card_number}}</option>
+				{% endfor %}
+			</select>
+		</div>
+
+		<div class="clearfix">
+			<a href="javascript:void(0);" class="btn btn-success xa-print ml20">
+				打印
+			</a>
+		</div>	
+	</div>
+
+	
+	<div class="panel panel-default xui-panel-table pl15 pr15 mt15">
+		<div 
+			class="panel-body panel-table p0 mt5 pt10"
+			data-ui-role="advanced-table" 
+			data-app="mall" 
+			data-resource="buy" 
+			data-template-id="#table" 
+			data-enable-paginator="true" 
+			data-enable-sort="false" 
+			data-selectable="false" 
+			data-disable-header-select="true" 
+			data-item-count-per-page="500" 
+			data-auto-load="false" 
+		>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+{% block js %}
+{% verbatim %}
+<script id="table" type="text/x-jquery-tmpl">
+	{{if items!='' }}
+	<table class="table table-bordered mb10 mt10 xui-i-table">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>商品名称</th>
+				<th>商品价格</th>
+				<th>商品描述</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			{{each(i, product) items}}
+			<tr data-id="${product.id}" data-name="${product.name}" data-price="${product.price}">
+				<td>${i + 1}</td>
+				<td>${product.name}</td>
+				<td>${product.price}</td>
+				<td>${product.desc}</td>
+				<td>
+					<div class="lock"><input id="lock" type="checkbox" class="xa-check"></div>
+				</td>
+			</tr>
+			{{/each}}
+		</tbody>
+	</table>
+	{{else}}
+		<div class="xui-emptyBox mt10" style="border:solid 1px #ddd;">
+			<span class="ml20">该商户没有商品，请前往商户列表添加</span>
+		</div>
+	{{/if}}
+	<br>
+</script>
+{% endverbatim %}
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+	
+	$('.xa-submit').click(function(event) {
+		var mall_id = $.trim($('[name="mall"]').val());
+		if(mall_id == "-1"){
+			alert("请选择商户！");
+			return;
+		}
+
+		var table = $('[data-ui-role="advanced-table"]').data('view');
+		table.reload({
+			mall_id: mall_id
+		}, {
+			emptyDataHint: '没有符合条件的数据'
+		});
+	});
+
+	var updateTotalPrice = function(){
+		var totalPrice = 0;
+		$(".xa-price").each(function(){
+			totalPrice = totalPrice + Number($(this).text());
+		});
+		$(".xa-total-price").text(totalPrice);
+	};
+
+	$('body').delegate('.xa-check', 'change', function (event) {
+		var checked = $(this).is(':checked');
+		var $el = $(event.target);
+		var $tr = $el.parent().parent().parent();
+		var id = $tr.attr('data-id');
+		var name = $tr.attr('data-name');
+		var price = $tr.attr('data-price');
+
+		if(checked){
+			$('.xa-no-product').hide();
+			$('.xa-product-list').append('<tr class="data-tr-' + id + '"><td>' + name + 
+				'</td><td>' + price + '</td><td>' + 
+						'<div>' + 
+							'<input type="text" name="phone" class="xa-product-num" data-validate="require-positive-int" data-id="' + id + '" data-price="' + price + '" value="1"/>' + 
+							'<div class="errorHint ml5" data-error-hint="请输入正整数"></div>' + 
+						'</div>' + 
+					'</td>' + 
+					'<td class="xa-price xa-price-' + id + '">' + price + '</td>' + 
+				'</tr>'
+			);
+		} else {
+			$('.data-tr-' + id).remove();
+		}
+		
+		updateTotalPrice();
+	});
+
+	$('body').delegate('.xa-product-num', 'change', function (event) {
+		var value = $(this).val();
+		if(!isNaN(value)){
+			var int_value = Number(value);
+			if(int_value > 0){
+				var price = Number($(this).attr('data-price'));
+				var total_price = int_value * price;
+				var id = $(this).attr('data-id');
+				$('.xa-price-' + id).text(total_price.toFixed(2));
+			}
+			updateTotalPrice();
+		} else{
+			// alert('不是数字');
+		}
+	});
+	
+});
+</script>
+{% endblock %}
+

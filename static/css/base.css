@@ -800,6 +800,16 @@ button.xui-close{
     background-color: #fff;
 	padding-top: 65px;
 }
+.xui-small-emptyBox{
+	height:80px;
+	text-align: center;
+    background-color: #fff;
+	padding-top: 30px;
+}
+.xui-small-emptyBox span{
+	color:#AAA;
+	font-size: 16px;
+}
 .xui-emptyBox span{
 	color:#AAA;
 	font-size: 16px;

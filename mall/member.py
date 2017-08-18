@@ -30,7 +30,6 @@ class Member(resource.Resource):
 				'id': member_id,
 				'name': member.name,
 				'phone': member.phone,
-				'addr': member.addr,
 				'remark': member.remark
 			}
 
@@ -49,14 +48,12 @@ class Member(resource.Resource):
 		"""
 		name = request.POST.get('name')
 		phone = request.POST.get('phone')
-		addr = request.POST.get('addr')
 		remark = request.POST.get('remark')
 
 		mall_models.Member.objects.create(
 			owner=request.user, 
 			name=name, 
 			phone=phone, 
-			addr=addr,
 			remark=remark
 		)
 
@@ -71,7 +68,6 @@ class Member(resource.Resource):
 		member_id = request.POST.get('id')
 		name = request.POST.get('name')
 		phone = request.POST.get('phone')
-		addr = request.POST.get('addr')
 		remark = request.POST.get('remark')
 
 		mall_models.Member.objects.filter(
@@ -80,7 +76,6 @@ class Member(resource.Resource):
 		).update(
 			name=name, 
 			phone=phone, 
-			addr=addr,
 			remark=remark
 		)
 
@@ -94,7 +89,7 @@ class Member(resource.Resource):
 		"""
 		member_id = request.POST.get('id')
 
-		mall_models.Member.objects.filter(owner=request.user, id=memberl_id).update(is_deleted=True)
+		mall_models.Member.objects.filter(owner=request.user, id=member_id).update(is_deleted=True)
 
 		response = create_response(200)
 		return response.get_response()
