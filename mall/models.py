@@ -8,12 +8,24 @@ from django.contrib.auth.models import User
 import json
 import time
 
+TYPE2NAME = {
+	u'': u'未知',
+	u'canting': u'餐厅',
+	u'chaoshi': u'超市',
+	u'jiayouzhan': u'加油站',
+	u'jiancai': u'建材',
+	u'muying': u'母婴',
+	u'qiche': u'汽车',
+	u'shangchang': u'商场',
+}
+
 class Mall(models.Model):
 	"""
 	商户
 	"""
 	owner = models.ForeignKey(User)
 	name = models.CharField(max_length=100)
+	type = models.CharField(max_length=16)
 	remark = models.CharField(max_length=256, default='')
 	is_deleted = models.BooleanField(default=False) #是否删除
 	created_at = models.DateTimeField(auto_now_add=True)

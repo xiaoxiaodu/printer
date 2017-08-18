@@ -36,11 +36,14 @@ class Malls(resource.Resource):
 		响应API GET
 		"""
 		name = request.GET.get('name', '')
+		type = request.GET.get('type', None)
 		params = {
 			'is_deleted': False
 		}
 		if name:
 			params['name__icontains'] = name
+		if type:
+			params['type'] = type
 		malls = mall_models.Mall.objects.filter(**params).order_by('-id')	
 		
 		#进行分页
@@ -53,6 +56,7 @@ class Malls(resource.Resource):
 			items.append({
 				'id': mall.id,
 				'name': mall.name,
+				'type': mall_models.TYPE2NAME.get(mall.type, u'错误类型'),
 				'remark': mall.remark,
 				'created_at': mall.created_at.strftime("%Y-%m-%d %H:%M:%S")
 			})
