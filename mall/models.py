@@ -42,6 +42,7 @@ class Product(models.Model):
 	"""
 	owner = models.ForeignKey(User)
 	mall = models.ForeignKey(Mall, related_name="mall_product") # 所属哪个商户
+	code = models.CharField(max_length=32)  #商品条码
 	name = models.CharField(max_length=128)  #商品名称
 	price = models.FloatField(default=0.0)  #商品价格
 	desc = models.CharField(max_length=256, default='')  #商品描述

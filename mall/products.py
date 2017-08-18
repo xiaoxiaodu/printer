@@ -58,6 +58,7 @@ class Products(resource.Resource):
 			items.append({
 				'id': product.id,
 				'mall_id': product.mall_id,
+				'code': product.code,
 				'name': product.name,
 				'price': '%.2f' % product.price,
 				'desc': product.desc,

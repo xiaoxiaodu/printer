@@ -30,6 +30,7 @@ class Product(resource.Resource):
 			product = mall_models.Product.objects.get(owner=request.user, mall_id=mid, id=product_id)
 			product_data = {
 				'id': product_id,
+				'code': product.code,
 				'name': product.name,
 				'price': '%.2f' % product.price,
 				'desc': product.desc
@@ -51,10 +52,11 @@ class Product(resource.Resource):
 		"""
 		mall_id = request.POST.get('mid')
 		name = request.POST.get('name')
+		code = request.POST.get('code', '')
 		price = request.POST.get('price')
 		desc = request.POST.get('desc', '')
 
-		mall_models.Product.objects.create(owner=request.user, mall_id=mall_id, name=name, price=price, desc=desc)
+		mall_models.Product.objects.create(owner=request.user, mall_id=mall_id, code=code, name=name, price=price, desc=desc)
 
 		response = create_response(200)
 		return response.get_response()
@@ -66,11 +68,12 @@ class Product(resource.Resource):
 		"""
 		product_id = request.POST.get('id')
 		mall_id = request.POST.get('mid')
+		code = request.POST.get('code', '')
 		name = request.POST.get('name')
 		price = request.POST.get('price')
 		desc = request.POST.get('desc', '')
 
-		mall_models.Product.objects.filter(owner=request.user, mall_id=mall_id, id=product_id).update(name=name, price=price, desc=desc)
+		mall_models.Product.objects.filter(owner=request.user, mall_id=mall_id, id=product_id).update(name=name, code=code, price=price, desc=desc)
 
 		response = create_response(200)
 		return response.get_response()

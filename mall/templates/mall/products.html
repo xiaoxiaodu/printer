@@ -68,6 +68,7 @@
 		<thead>
 			<tr>
 				<th>#</th>
+				<th>商品条码</th>
 				<th>商品名称</th>
 				<th>商品价格</th>
 				<th>商品描述</th>
@@ -79,6 +80,7 @@
 			{{each(i, product) items}}
 			<tr data-id="${product.id}" data-mid="${product.mall_id}" class="xui-i-expandable xa-expand">
 				<td>${i + 1}</td>
+				<td>${product.code}</a></td>
 				<td>${product.name}</a></td>
 				<td>${product.price}</td>
 				<td>${product.desc}</td>
