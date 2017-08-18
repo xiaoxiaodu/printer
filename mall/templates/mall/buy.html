@@ -48,7 +48,10 @@
 			</tbody>
 		</table>
 		<hr>
-		<div class="fl mt10 mr10"><span>总计：</span><span class="xa-total-price">0</span><span>元</span></div>
+		<div class="fl mt10 mr10">
+			<span>件数：</span><span class="xa-total-product-num">0</span><span>件</span> &nbsp;&nbsp;
+			<span>总计：</span><span class="xa-total-price">0</span><span>元</span>
+		</div>
 		<label class="control-label fl" for="mall">银行卡</label>
 		<div class="fl xa-bank">
 			<select class="form-control ml5" name="mall">
@@ -145,10 +148,16 @@ $(document).ready(function() {
 
 	var updateTotalPrice = function(){
 		var totalPrice = 0;
+		var productNum = 0;
 		$(".xa-price").each(function(){
 			totalPrice = totalPrice + Number($(this).text());
 		});
 		$(".xa-total-price").text(totalPrice);
+
+		$(".xa-product-num").each(function(){
+			productNum = productNum + Number($(this).val());
+		});
+		$(".xa-total-product-num").text(productNum);
 	};
 
 	$('body').delegate('.xa-check', 'change', function (event) {

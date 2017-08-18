@@ -92,6 +92,7 @@ class MemberHasCard(models.Model):
 	member = models.ForeignKey(Member)
 	card_number = models.CharField(max_length=32, default='')  #卡号
 	bank_name = models.CharField(max_length=32, default='')  #发卡行名称
+	valid_time = models.CharField(max_length=8, default='')  #有效期
 	is_deleted = models.BooleanField(default=False) #是否删除
 
 	class Meta(object):

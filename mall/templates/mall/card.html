@@ -50,6 +50,16 @@
 							name="card_number"
 						/>
 					</div>
+					<label class="control-label fl" for="valid_time">有效期</label>
+					<div class="fl">
+						<input 
+							type="text" 
+							class="form-control w80 ml5" 
+							id="valid_time" 
+							name="valid_time"
+						/>
+					</div>
+					<small class="fl ml15 mt10 xa-bank-input">格式：月/年，如：06/21</small>
 					<div class="fl ml10">
 						<a href="javascript:void(0);" class="btn btn-primary xa-add">添加</a>
 					</div>
@@ -90,6 +100,7 @@
 				<th>#</th>
 				<th>银行</th>
 				<th>卡号</th>
+				<th>有效期</th>
 				<th>操作</th>
 			</tr>
 		</thead>
@@ -99,6 +110,7 @@
 				<td>${i + 1}</td>
 				<td>${card.bank_name}</td>
 				<td>${card.card_number}</td>
+				<td>${card.valid_time}</td>
 				<td>
 					<a href="javascript:void(0);" class="btn btn-danger btn-xs xa-delete">删除</a>
 				</td>
@@ -122,12 +134,18 @@ $(document).ready(function() {
 	$('.xa-add').click(function(event) {
 		var bank_name = $.trim($('[name="bank_name"]').val());
 		var card_number = $.trim($('[name="card_number"]').val());
+		var valid_time = $.trim($('[name="valid_time"]').val());
 		if(bank_name == ""){
 			alert("银行不能为空！");
 			return;
 		}
 		if(card_number == ""){
 			alert("卡号不能为空！");
+			return;
+		}
+
+		if(valid_time == ""){
+			alert("有效期不能为空！");
 			return;
 		}
 
@@ -138,7 +156,8 @@ $(document).ready(function() {
 			args: {
 				member_id: {{member_id}},
 				bank_name: bank_name,
-				card_number: card_number
+				card_number: card_number,
+				valid_time: valid_time
 			},
 			success: function(data) {
 				var table = $('[data-ui-role="advanced-table"]').data('view');

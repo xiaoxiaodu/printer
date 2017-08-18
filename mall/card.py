@@ -31,7 +31,8 @@ class Card(resource.Resource):
 				'id': card.id,
 				'member_id': card.member_id,
 				'card_number': card.card_number,
-				'bank_name': card.bank_name
+				'bank_name': card.bank_name,
+				'valid_time': card.valid_time
 			})
 
 		c = RequestContext(request, {
@@ -51,8 +52,9 @@ class Card(resource.Resource):
 		member_id = request.POST.get('member_id')
 		bank_name = request.POST.get('bank_name')
 		card_number = request.POST.get('card_number')
+		valid_time = request.POST.get('valid_time')
 
-		if member_id and bank_name and card_number:
+		if member_id and bank_name and card_number and valid_time:
 			pass
 		else:
 			response = create_response(500)
@@ -67,7 +69,8 @@ class Card(resource.Resource):
 			mall_models.MemberHasCard.objects.create(
 				member_id=member_id, 
 				card_number=card_number, 
-				bank_name=bank_name
+				bank_name=bank_name,
+				valid_time=valid_time
 			)
 			response = create_response(200)
 
@@ -92,7 +95,8 @@ class Card(resource.Resource):
 			items.append({
 				'id': card.id,
 				'bank_name': card.bank_name,
-				'card_number': card.card_number
+				'card_number': card.card_number,
+				'valid_time': card.valid_time
 			})
 
 		response_data = {
