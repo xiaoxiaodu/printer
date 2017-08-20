@@ -24,7 +24,8 @@ class Mall(models.Model):
 	商户
 	"""
 	owner = models.ForeignKey(User)
-	name = models.CharField(max_length=100)
+	name = models.CharField(max_length=100)  #商铺简称
+	ename = models.CharField(max_length=16)  #英文简称
 	type = models.CharField(max_length=16)
 	remark = models.CharField(max_length=256, default='')
 	is_deleted = models.BooleanField(default=False) #是否删除

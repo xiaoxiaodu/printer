@@ -29,6 +29,7 @@ class Mall(resource.Resource):
 			mall_data = {
 				'id': mall_id,
 				'name': mall.name,
+				'ename': mall.ename,
 				'type': mall.type,
 				'remark': mall.remark
 			}
@@ -47,10 +48,11 @@ class Mall(resource.Resource):
 		新增商户
 		"""
 		name = request.POST.get('name')
+		ename = request.POST.get('ename')
 		type = request.POST.get('type')
 		remark = request.POST.get('remark')
 
-		mall_models.Mall.objects.create(owner=request.user, name=name, type=type, remark=remark)
+		mall_models.Mall.objects.create(owner=request.user, name=name, ename=ename, type=type, remark=remark)
 
 		response = create_response(200)
 		return response.get_response()
@@ -62,10 +64,11 @@ class Mall(resource.Resource):
 		"""
 		mall_id = request.POST.get('id')
 		name = request.POST.get('name')
+		ename = request.POST.get('ename')
 		type = request.POST.get('type')
 		remark = request.POST.get('remark')
 
-		mall_models.Mall.objects.filter(owner=request.user, id=mall_id).update(name=name, type=type, remark=remark)
+		mall_models.Mall.objects.filter(owner=request.user, id=mall_id).update(name=name, ename=ename, type=type, remark=remark)
 
 		response = create_response(200)
 		return response.get_response()

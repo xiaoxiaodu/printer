@@ -54,7 +54,7 @@
 		</div>
 		<label class="control-label fl" for="mall">银行卡</label>
 		<div class="fl xa-bank">
-			<select class="form-control ml5" name="mall">
+			<select class="form-control ml5" name="card">
 				<option value="-1">请选择银行卡...</option>
 				{% for card in cards %}
 				<option value="{{card.id}}">{{card.bank_name}} &nbsp; {{card.card_number}}</option>
@@ -138,11 +138,59 @@ $(document).ready(function() {
 			return;
 		}
 
+		$('.xa-product-item').remove();
+		$('.xa-no-product').show();
+		updateTotalPrice();
+
 		var table = $('[data-ui-role="advanced-table"]').data('view');
 		table.reload({
 			mall_id: mall_id
 		}, {
 			emptyDataHint: '没有符合条件的数据'
+		});
+	});
+
+	$('.xa-print').click(function(event) {
+		var card = $.trim($('[name="card"]').val());
+		var number = Number($(".xa-total-product-num").text());
+		if(number <= 0){
+			alert('请先选择商品');
+			return;
+		}
+
+		if(card == '-1'){
+			alert('请选择银行卡，如果该会员没有银行卡请先添加');
+			return;
+		}
+
+		var mall_id = $.trim($('[name="mall"]').val());
+		var card_id = $.trim($('[name="card"]').val());
+		var products = {};
+		$(".xa-product-num").each(function(){
+			var product_id = $(this).attr('data-id');
+			var product_num = $(this).val();
+			products[product_id] = product_num;
+		});
+
+		console.log(products);
+
+		W.getApi().call({
+			app: 'mall',
+			resource: 'buy',
+			method: 'put',
+			args: {
+				member_id: {{member_id}},
+				mall_id: mall_id,
+				card_id: card_id,
+				products: JSON.stringify(products)
+			},
+			success: function(data) {
+				// var table = $('[data-ui-role="advanced-table"]').data('view');
+				// table.reload();
+			},
+			error: function(resp) {
+				// alert(resp.errMsg);
+			}
 		});
 	});
 
@@ -170,7 +218,7 @@ $(document).ready(function() {
 
 		if(checked){
 			$('.xa-no-product').hide();
-			$('.xa-product-list').append('<tr class="data-tr-' + id + '"><td>' + name + 
+			$('.xa-product-list').append('<tr class="xa-product-item data-tr-' + id + '"><td>' + name + 
 				'</td><td>' + price + '</td><td>' + 
 						'<div>' + 
 							'<input type="text" name="phone" class="xa-product-num" data-validate="require-positive-int" data-id="' + id + '" data-price="' + price + '" value="1"/>' + 

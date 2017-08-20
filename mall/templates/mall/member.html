@@ -70,6 +70,7 @@
 			if (!W.validate()) {
 				return;
 			}
+			$(this).attr('disabled', 'true');
 
 			var method = 'put';
 			if (inUpdateMode) {

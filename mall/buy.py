@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import json
+from importlib import import_module
 
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -46,7 +48,8 @@ class Buy(resource.Resource):
 			'second_navs': export.get_second_navs(request),
 			'second_nav': SECOND_NAV,
 			'malls': mall_data,
-			'cards': card_data
+			'cards': card_data,
+			'member_id': member_id
 		})
 		return render_to_response('mall/buy.html', c)
 	
@@ -82,5 +85,23 @@ class Buy(resource.Resource):
 
 		response = create_response(200)
 		response.data = response_data
+
+		return response.get_response()
+
+	@login_required
+	def api_put(request):
+		"""
+		购买商品，打印小票
+		"""
+		member_id = request.POST.get('member_id', -1)
+		mall_id = request.POST.get('mall_id', -1)
+		card_id = request.POST.get('card_id', -1)
+		products_info = json.loads(request.POST.get('products', ''))
+
+		mall = mall_models.Mall.objects.get(id=mall_id)
+		print_tool = import_module('tmpls.%s' % mall.ename)
+		print_tool.print1(member_id, mall_id, card_id, products_info)
+
+		response = create_response(200)
 
 		return response.get_response()
