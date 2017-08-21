@@ -31,8 +31,8 @@ def __print_xiaopiao(member, mall, card, products_info):
 		name = product.name
 		if len(name) < 12:
 			name += ' ' * (12 - len(name))
-		product_line = "%s %d    %.2f    %.2f" % (name, num, product.price, price)
-		product_str += u"销售单号： %s\r\n%s\r\n" % (sale_id, product_line)
+		product_line = "%s %d    %.2f   %.2f" % (name, num, product.price, price)
+		product_str += u"销售单号： %s\r%s\r" % (sale_id, product_line)
 		sale_id += random.randint(10, 200)
 	card_number = card.card_number[0:-11] + '******' + card.card_number[-4:]
 
@@ -42,9 +42,9 @@ def __print_xiaopiao(member, mall, card, products_info):
 	date = datetime.now().strftime('%Y-%m-%H')
 	time = datetime.now().strftime('%H:%M')
 	#模板文件保存路径，此处使用的是绝对路径，相对路径未测试过
-	template_path = u'D:\\tmpl\\北京君太百货小票.docx'
+	template_path = u'F:\\printer\\tmpls\\\\files\\北京君太百货小票.docx'
 	#另存文件路径，需要提前建好文件夹，不然会出错
-	store_path = u'D:\\tmpl\\temp\\'
+	store_path = u'F:\\模板\\'
 	
 	#启动word
 	pythoncom.CoInitialize()
@@ -100,9 +100,9 @@ def __print_yinlian(card, member, total_price, datestr):
 	refeno = '%d' % random.randint(600000000009, 699999999999)
 
 	#模板文件保存路径，此处使用的是绝对路径，相对路径未测试过
-	template_path = u'D:\\tmpl\\北京君太百货银联.docx'
+	template_path = u'F:\\printer\\tmpls\\files\\北京君太百货银联.docx'
 	#另存文件路径，需要提前建好文件夹，不然会出错
-	store_path = u'D:\\tmpl\\temp\\'
+	store_path = u'F:\\模板\\'
 	
 	#启动word
 	pythoncom.CoInitialize()

@@ -18,7 +18,7 @@ html, body {
 	/*display: table-cell;*/
 	float:left;
 	vertical-align: top;
-	width: 33%;
+	/*width: 33%;*/
 }
 .clearboth {
 	clear: both;

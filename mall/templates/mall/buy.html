@@ -185,6 +185,7 @@ $(document).ready(function() {
 				products: JSON.stringify(products)
 			},
 			success: function(data) {
+				W.showHint('success', '打印完成!');
 				// var table = $('[data-ui-role="advanced-table"]').data('view');
 				// table.reload();
 			},
